@@ -1,0 +1,47 @@
+---
+import DeleteIcon from '../assets/icons/delete.svg'
+import EditIcon from '../assets/icons/edit.svg'
+import RepeatIcon from '../assets/icons/repeat.svg'
+---
+
+<div tabindex="0" class="collapse bg-base-200 border-black border min-w-full">
+  <div class="collapse-title">
+    <div class="flex justify-between">
+      <div class="flex flex-col">
+        <span class="text-lg font-bold">Lunar Ceremony</span>
+        <span>Reminder Date: Lunar 20-02-2025 (Gregorian: 20-02-2025)</span>
+        <span class="text-info">Due in 3 days</span>
+        <span class="flex align-middle">
+          <span>
+            <RepeatIcon width="20" height="20" class="inline" /> Monthly
+          </span>
+
+          <div class="divider divider-horizontal divider-accent m-0.5"></div>
+
+          <span class="badge badge-secondary">Active 3d before</span>
+        </span>
+      </div>
+
+      <div>
+        <button class="btn btn-primary btn-square">
+          <EditIcon width="20" height="20" />
+        </button>
+        <button class="btn btn-error btn-square">
+          <DeleteIcon width="20" height="20" />
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="collapse-content">
+    <span class="text-lg font-semibold">Prepare for Lunar Ceremony</span>
+    <br />
+    <p>
+      Hi Bùi Đức Huy, This is your reminder to prepare for the lunar ceremony,
+      today is 30.
+
+      <a href="https://daisyui.com" class="link link-primary"
+        >Acknowledge Reminder</a
+      >
+    </p>
+  </div>
+</div>
