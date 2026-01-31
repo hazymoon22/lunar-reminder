@@ -1,0 +1,61 @@
+---
+import type { SvgComponent } from 'astro/types'
+import AdminIcon from '../assets/icons/admin.svg'
+import LogoutIcon from '../assets/icons/logout.svg'
+import MoonIcon from '../assets/icons/moon.svg'
+import ReminderIcon from '../assets/icons/reminder.svg'
+import UpcomingIcon from '../assets/icons/upcoming.svg'
+
+type NavItem = {
+  name: string
+  href: string
+  icon: SvgComponent
+}
+
+const navItems: NavItem[] = [
+  { name: 'Upcoming', href: '/upcoming', icon: UpcomingIcon },
+  { name: 'Reminders', href: '/reminders', icon: ReminderIcon },
+  { name: 'Admin', href: '/users', icon: AdminIcon }
+]
+
+function isActive(href: string) {
+  const currentPath = Astro.url.pathname
+  if (href === '/') {
+    return currentPath === '/'
+  }
+
+  return currentPath.startsWith(href)
+}
+---
+
+<aside class="menu bg-base-200 min-h-full w-60 p-4">
+  <div class="flex align-middle gap-3">
+    <MoonIcon width="32" height="32" />
+    <span class="text-xl font-bold">Lunar Reminder</span>
+  </div>
+
+  <div class="divider divider-accent"></div>
+
+  <ul>
+    {
+      navItems.map((item) => (
+        <li class="lg:flex justify-center align-middle flex-col">
+          <a
+            href={item.href}
+            class:list={[{ 'text-neutral bg-primary': isActive(item.href) }]}
+          >
+            <span class="icon">
+              <item.icon width="32" height="32" />
+            </span>
+            <span>{item.name}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <a href="/" class="btn btn-secondary mt-auto">
+    <LogoutIcon width="32" height="32" />
+    <span>Logout</span>
+  </a>
+</aside>
