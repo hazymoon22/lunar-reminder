@@ -1,0 +1,114 @@
+---
+export const prerender = false // Enable SSR for this page
+
+import Layout from '../../layouts/Layout.astro'
+import '../../styles/global.css' // Import CSS directly for SSR
+
+// Server-side logic (runs on each request now, not at build time)
+const code = Astro.url.searchParams.get('code')
+const error = Astro.url.searchParams.get('error')
+
+console.log('Code:', code)
+console.log('Error:', error)
+
+// Handle OAuth errors
+if (error) {
+  console.error('OAuth error:', error)
+  return Astro.redirect('/?error=' + error)
+}
+
+// For now, we'll just simulate processing
+// In production, this is where you'd:
+// 1. Exchange code for access token
+// 2. Get user info from Google
+// 3. Create/update user in database
+// 4. Set session cookie
+// 5. Redirect to /upcoming
+
+// Simulate: if there's a code parameter, we'll redirect after client-side delay
+// If no code, redirect back to login
+if (!code) {
+  console.log('No code found, redirecting to login')
+  return Astro.redirect('/?error=no_code')
+}
+
+console.log('Code found, rendering callback page')
+---
+
+<Layout>
+  <div class="min-h-screen flex items-center justify-center bg-base-200">
+    <div class="card bg-base-100 shadow-xl w-full max-w-md">
+      <div class="card-body items-center text-center">
+        <!-- Loading Spinner -->
+        <span class="loading loading-spinner loading-lg text-primary mb-4"
+        ></span>
+
+        <!-- Status Message -->
+        <h2 class="text-2xl font-bold mb-2">Signing you in...</h2>
+        <p class="text-base-content/70">
+          Please wait while we complete your authentication
+        </p>
+
+        <!-- Progress Steps (visual feedback) -->
+        <div class="mt-6 w-full">
+          <ul class="steps steps-vertical lg:steps-horizontal w-full">
+            <li class="step step-primary" id="step-1">Verifying</li>
+            <li class="step" id="step-2">Creating Session</li>
+            <li class="step" id="step-3">Redirecting</li>
+          </ul>
+        </div>
+
+        <!-- Error State (hidden by default) -->
+        <div id="error-message" class="alert alert-error mt-6 hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>Authentication failed. Redirecting back...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Simulate auth processing with visual feedback
+  const step1 = document.getElementById('step-1')
+  const step2 = document.getElementById('step-2')
+  const step3 = document.getElementById('step-3')
+  const errorMessage = document.getElementById('error-message')
+
+  // Step 1: Verifying (already shown as complete)
+  setTimeout(() => {
+    step2?.classList.add('step-primary')
+  }, 500)
+
+  // Step 2: Creating Session
+  setTimeout(() => {
+    step3?.classList.add('step-primary')
+  }, 1000)
+
+  // Step 3: Redirect to upcoming page
+  // setTimeout(() => {
+  //  window.location.href = '/upcoming'
+  //}, 1500)
+
+  // Fallback: if something goes wrong, show error after 5 seconds
+  // setTimeout(() => {
+  //   if (window.location.pathname === '/auth/callback') {
+  //     errorMessage?.classList.remove('hidden')
+  //     setTimeout(() => {
+  //       window.location.href = '/?error=timeout'
+  //     }, 2000)
+  //   }
+  // }, 5000)
+</script>
