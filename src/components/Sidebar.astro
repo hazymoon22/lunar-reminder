@@ -54,8 +54,17 @@ function isActive(href: string) {
     }
   </ul>
 
-  <a href="/" class="btn btn-secondary mt-auto">
+  <button id="btn-sign-out" class="btn btn-secondary mt-auto">
     <LogoutIcon width="32" height="32" />
     <span>Logout</span>
-  </a>
+  </button>
 </aside>
+
+<script>
+  import { signOut } from '../lib/auth-client'
+
+  const btnSignOut = document.getElementById('btn-sign-out')
+  btnSignOut?.addEventListener('click', async () => {
+    await signOut()
+  })
+</script>
