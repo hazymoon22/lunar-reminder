@@ -1,5 +1,22 @@
 import { relations } from 'drizzle-orm'
-import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  date,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid
+} from 'drizzle-orm/pg-core'
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema
+} from 'drizzle-zod'
+import { z } from 'zod'
+
+export const REPEAT_FREQUENCIES = ['monthly', 'yearly'] as const
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -91,3 +108,43 @@ export const accountRelations = relations(account, ({ one }) => ({
     references: [user.id]
   })
 }))
+
+export const reminder = pgTable('reminder', {
+  id: uuid('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text('title').notNull(),
+  reminderDate: date('reminder_date', { mode: 'date' }).notNull(),
+  nextAlertDate: date('next_reminder_date', { mode: 'date' }),
+  repeat: text('repeat', {
+    enum: REPEAT_FREQUENCIES
+  }),
+  alertBefore: integer('alert_before'),
+  mailSubject: text('mail_subject').notNull(),
+  mailBody: text('mail_body').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull()
+})
+
+export const ZSelectReminder = createSelectSchema(reminder)
+export type SelectReminder = z.infer<typeof ZSelectReminder>
+
+export const ZInsertReminder = createInsertSchema(reminder, {
+  reminderDate: z.coerce.date()
+}).omit({
+  createdAt: true,
+  updatedAt: true
+})
+
+export type InsertReminder = z.infer<typeof ZInsertReminder>
+
+export const ZUpdateReminder = createUpdateSchema(reminder, {
+  reminderDate: z.coerce.date().optional()
+}).omit({
+  createdAt: true,
+  updatedAt: true
+})
+export type UpdateReminder = z.infer<typeof ZUpdateReminder>
