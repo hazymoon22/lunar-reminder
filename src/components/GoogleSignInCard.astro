@@ -28,6 +28,7 @@ import MoonIcon from '../assets/icons/moon.svg'
 </div>
 
 <script>
+  import { APP_URL } from 'astro:env/client'
   import { authClient } from '../lib/auth-client.ts'
 
   const btnGoogleAuth = document.getElementById('btn-google-auth')
@@ -35,7 +36,7 @@ import MoonIcon from '../assets/icons/moon.svg'
     await authClient.signIn.social({
       provider: 'google',
       callbackURL: '/upcoming',
-      errorCallbackURL: '/'
+      errorCallbackURL: APP_URL
     })
   })
 </script>
