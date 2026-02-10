@@ -25,7 +25,7 @@ export default defineConfig({
         access: 'secret'
       }),
       DATABASE_URL: envField.string({ context: 'server', access: 'secret' }),
-      BETTER_AUTH_URL: envField.string({
+      APP_URL: envField.string({
         context: 'server',
         access: 'public',
         default: 'http://localhost:4321'

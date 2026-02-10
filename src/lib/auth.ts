@@ -1,7 +1,7 @@
 import {
   ALLOWED_EMAILS,
+  APP_URL,
   BETTER_AUTH_SECRET,
-  BETTER_AUTH_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET
 } from 'astro:env/server'
@@ -15,8 +15,9 @@ export const auth = betterAuth({
     provider: 'pg',
     schema
   }),
-  baseURL: BETTER_AUTH_URL,
+  baseURL: APP_URL,
   secret: BETTER_AUTH_SECRET,
+  trustedOrigins: [APP_URL],
   emailAndPassword: {
     enabled: false
   },
