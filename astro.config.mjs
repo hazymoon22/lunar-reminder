@@ -26,7 +26,7 @@ export default defineConfig({
       }),
       DATABASE_URL: envField.string({ context: 'server', access: 'secret' }),
       APP_URL: envField.string({
-        context: 'server',
+        context: 'client',
         access: 'public',
         default: 'http://localhost:4321'
       }),

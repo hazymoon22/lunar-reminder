@@ -1,6 +1,6 @@
+import { APP_URL } from 'astro:env/client'
 import {
   ALLOWED_EMAILS,
-  APP_URL,
   BETTER_AUTH_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET

@@ -1,6 +1,9 @@
+import { APP_URL } from 'astro:env/client'
 import { createAuthClient } from 'better-auth/client'
 
-export const authClient = createAuthClient()
+export const authClient = createAuthClient({
+  baseURL: APP_URL
+})
 
 export async function signOut() {
   try {
