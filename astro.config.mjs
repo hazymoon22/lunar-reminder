@@ -3,13 +3,17 @@ import deno from '@deno/astro-adapter'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, envField } from 'astro/config'
 
+import svelte from '@astrojs/svelte'
+
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
   adapter: deno(),
+
   vite: {
     plugins: [tailwindcss()]
   },
+
   env: {
     schema: {
       GOOGLE_CLIENT_ID: envField.string({
@@ -30,7 +34,13 @@ export default defineConfig({
         context: 'server',
         access: 'secret'
       }),
-      ALLOWED_EMAILS: envField.string({ context: 'server', access: 'secret' })
+      ALLOWED_EMAILS: envField.string({ context: 'server', access: 'secret' }),
+      ADMIN: envField.string({ context: 'server', access: 'secret' })
     }
+  },
+
+  integrations: [svelte()],
+  experimental: {
+    liveContentCollections: true
   }
 })
