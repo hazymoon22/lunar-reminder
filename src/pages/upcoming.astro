@@ -1,11 +1,12 @@
 ---
-import Reminder from '../components/Reminder.astro'
-import DrawerLayout from '../layouts/DrawerLayout.astro'
+import { getLiveCollection } from 'astro:content'
+import ReminderList from '../components/ReminderList.astro'
+
+const { entries } = await getLiveCollection('reminders')
+const reminders =
+  entries
+    ?.map((reminder) => reminder.data)
+    .filter((reminder) => reminder.nextAlertDate) ?? []
 ---
 
-<DrawerLayout>
-  <Reminder />
-  <Reminder />
-  <Reminder />
-  <Reminder />
-</DrawerLayout>
+<ReminderList {reminders} />

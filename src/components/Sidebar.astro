@@ -39,7 +39,7 @@ function isActive(href: string) {
   <ul>
     {
       navItems.map((item) => (
-        <li class="lg:flex justify-center align-middle flex-col">
+        <li class="lg:flex justify-center align-middle flex-col mb-2">
           <a
             href={item.href}
             class:list={[{ 'text-neutral bg-primary': isActive(item.href) }]}
@@ -63,8 +63,12 @@ function isActive(href: string) {
 <script>
   import { signOut } from '../lib/auth-client'
 
-  const btnSignOut = document.getElementById('btn-sign-out')
+  const btnSignOut = document.getElementById(
+    'btn-sign-out'
+  ) as HTMLButtonElement
   btnSignOut?.addEventListener('click', async () => {
+    btnSignOut.disabled = true
     await signOut()
+    btnSignOut.disabled = false
   })
 </script>

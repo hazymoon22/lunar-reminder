@@ -1,47 +1,159 @@
 ---
+import sanitizeHtml from 'sanitize-html'
 import DeleteIcon from '../assets/icons/delete.svg'
 import EditIcon from '../assets/icons/edit.svg'
 import RepeatIcon from '../assets/icons/repeat.svg'
+import type { ReminderCard } from '../models'
+
+interface Props {
+  reminder: ReminderCard
+}
+
+const { reminder } = Astro.props
+const sanitizeMailBody = sanitizeHtml(reminder.mailBody, {
+  allowedTags: ['a', 'br'],
+  allowedAttributes: {
+    a: ['href', 'class']
+  }
+})
 ---
 
-<div tabindex="0" class="collapse bg-base-200 border-black border min-w-full">
-  <div class="collapse-title">
+<details
+  class="reminder-card collapse bg-base-200 border-base-300 border shadow-accent shadow-sm min-w-full"
+  data-reminder={JSON.stringify(reminder)}
+>
+  <summary class="collapse-title">
     <div class="flex justify-between">
       <div class="flex flex-col">
-        <span class="text-lg font-bold">Lunar Ceremony</span>
-        <span>Reminder Date: Lunar 20-02-2025 (Gregorian: 20-02-2025)</span>
-        <span class="text-info">Due in 3 days</span>
-        <span class="flex align-middle">
-          <span>
-            <RepeatIcon width="20" height="20" class="inline" /> Monthly
+        <span class="text-lg font-bold">
+          {reminder.title}
+          {
+            reminder.dueIn === 'Expired' ? (
+              <span class="badge badge-error badge-sm badge-soft ml-1">
+                {reminder.dueIn}
+              </span>
+            ) : (
+              <span class="badge badge-info badge-sm ml-1">
+                Due {reminder.dueIn !== 'Today' && 'in'} {reminder.dueIn}
+              </span>
+            )
+          }
+        </span>
+
+        <span
+          >Reminder Date: Lunar {
+            reminder.reminderDate.toLocaleDateString('en-GB')
+          }</span
+        >
+
+        {
+          reminder.nextAlertDate && (
+            <span>
+              Next Alert Date: Lunar
+              {reminder.nextAlertDateLunar?.toLocaleDateString('en-GB')}
+              (Gregorian: {reminder.nextAlertDate?.toLocaleDateString('en-GB')})
+            </span>
+          )
+        }
+
+        <span class="flex align-middle gap-1 items-center relative top-0.5">
+          <span class="flex items-center gap-1 text-secondary capitalize">
+            <RepeatIcon width="20" height="20" class="inline" />
+            {reminder.repeat ? reminder.repeat : 'No repeat'}
           </span>
 
-          <div class="divider divider-horizontal divider-accent m-0.5"></div>
+          <div
+            class="divider divider-horizontal divider-neutral m-0 min-h-4 h-4 self-center"
+          >
+          </div>
 
-          <span class="badge badge-secondary">Active 3d before</span>
+          {
+            reminder.alertBefore ? (
+              <span class="badge badge-secondary badge-outline">
+                Active {reminder.alertBefore} day(s) before
+              </span>
+            ) : (
+              <span class="badge badge-secondary badge-outline">
+                Active on event time
+              </span>
+            )
+          }
         </span>
       </div>
 
       <div>
-        <button class="btn btn-primary btn-square">
-          <EditIcon width="20" height="20" />
-        </button>
-        <button class="btn btn-error btn-square">
-          <DeleteIcon width="20" height="20" />
-        </button>
+        <div class="tooltip tooltip-primary tooltip-bottom" data-tip="Edit">
+          <button
+            data-id={reminder.id}
+            class="btn btn-soft btn-square btn-primary btn-edit"
+          >
+            <EditIcon width="20" height="20" />
+          </button>
+        </div>
+
+        <div class="tooltip tooltip-secondary tooltip-bottom" data-tip="Delete">
+          <button
+            data-id={reminder.id}
+            class="btn-delete btn btn-soft btn-error btn-square"
+          >
+            <DeleteIcon width="20" height="20" />
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </summary>
   <div class="collapse-content">
-    <span class="text-lg font-semibold">Prepare for Lunar Ceremony</span>
+    <span class="text-lg font-semibold">{reminder.mailSubject}</span>
     <br />
-    <p>
-      Hi Bùi Đức Huy, This is your reminder to prepare for the lunar ceremony,
-      today is 30.
-
-      <a href="https://daisyui.com" class="link link-primary"
-        >Acknowledge Reminder</a
-      >
-    </p>
+    <p set:html={sanitizeMailBody} />
   </div>
-</div>
+</details>
+
+<script>
+  import { hc } from 'hono/client'
+  import type { AppType } from '../server'
+
+  const client = hc<AppType>('/')
+
+  const reminderCards = document.querySelectorAll(
+    '.reminder-card'
+  ) as NodeListOf<HTMLElement>
+  reminderCards.forEach((card) => {
+    if (!card.dataset.reminder) return
+
+    const reminder = JSON.parse(card.dataset.reminder)
+
+    const btnEdit = card.querySelector('.btn-edit')
+    if (btnEdit) {
+      btnEdit.addEventListener('click', (e) => {
+        document.dispatchEvent(
+          new CustomEvent('modal-reminder-detail:open', {
+            detail: reminder
+          })
+        )
+      })
+    }
+
+    const btnDelete = card.querySelector('.btn-delete') as HTMLButtonElement
+    if (btnDelete) {
+      btnDelete.addEventListener('click', async (e) => {
+        const confirmation = confirm('Delete this reminder?')
+        if (!confirmation) return
+
+        try {
+          btnDelete.disabled = true
+          const res = await client.api.reminders[':id'].$delete({
+            param: { id: reminder.id }
+          })
+
+          if (!res.ok) throw new Error('Failed to delete reminder')
+
+          location.reload()
+        } catch (err) {
+          console.error(err)
+          btnDelete.disabled = false
+        }
+      })
+    }
+  })
+</script>
