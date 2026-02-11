@@ -139,4 +139,4 @@ This is primarily a personal project, but contributions, suggestions, and feedba
 
 ---
 
-Built with ❤️ using Astro, Tailwind CSS, DaisyUI, and Deno
+Built with ❤️ using Astro, Tailwind CSS, DaisyUI, Hono and Deno
