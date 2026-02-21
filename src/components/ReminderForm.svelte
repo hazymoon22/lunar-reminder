@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Datepicker } from "flowbite-svelte"
-  import type { InsertReminder } from "../db/schema"
+  import type { InsertReminder } from "../db/schema.ts"
   import { ZRepeatOption } from "../models"
 
   const ALERT_BEFORE_OPTIONS = Object.freeze([

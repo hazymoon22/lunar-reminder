@@ -116,6 +116,9 @@ export const reminder = pgTable('reminder', {
   title: text('title').notNull(),
   reminderDate: date('reminder_date', { mode: 'date' }).notNull(),
   nextAlertDate: date('next_reminder_date', { mode: 'date' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
   repeat: text('repeat', {
     enum: REPEAT_FREQUENCIES
   }),
@@ -133,7 +136,8 @@ export const ZSelectReminder = createSelectSchema(reminder)
 export type SelectReminder = z.infer<typeof ZSelectReminder>
 
 export const ZInsertReminder = createInsertSchema(reminder, {
-  reminderDate: z.coerce.date()
+  reminderDate: z.coerce.date(),
+  nextAlertDate: z.coerce.date().optional()
 }).omit({
   createdAt: true,
   updatedAt: true
@@ -142,9 +146,32 @@ export const ZInsertReminder = createInsertSchema(reminder, {
 export type InsertReminder = z.infer<typeof ZInsertReminder>
 
 export const ZUpdateReminder = createUpdateSchema(reminder, {
-  reminderDate: z.coerce.date().optional()
+  reminderDate: z.coerce.date().optional(),
+  nextAlertDate: z.coerce.date().optional()
 }).omit({
   createdAt: true,
   updatedAt: true
 })
 export type UpdateReminder = z.infer<typeof ZUpdateReminder>
+
+export const alert = pgTable('alert', {
+  id: uuid('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  reminderId: uuid('reminder_id')
+    .notNull()
+    .references(() => reminder.id, { onDelete: 'cascade' }),
+  alertDate: date('alert_date', { mode: 'date' }).notNull(),
+  acknowledged: boolean('acknowledged').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull()
+})
+
+export const ZSelectAlert = createSelectSchema(alert)
+export type SelectAlert = z.infer<typeof ZSelectAlert>
+
+export const ZUpdateAlert = createUpdateSchema(alert)
+export type UpdateAlert = z.infer<typeof ZUpdateAlert>

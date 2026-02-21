@@ -1,18 +1,18 @@
 import { Lunar } from 'lunar-typescript'
-import type { InsertReminder, UpdateReminder } from '../db/schema'
+import type { InsertReminder, UpdateReminder } from '../db/schema.ts'
 import {
   dateToLunar,
   getLunarNextMonth,
   getLunarNextYear,
   solarToDate
-} from '../lib/lunar'
-import { ZRepeatOption } from '../models'
+} from '../lib/lunar.ts'
+import { ZRepeatOption } from '../models/index.ts'
 
 export function getNextAlertDate(
   reminder: InsertReminder | UpdateReminder
-): Date | null {
+): Date | undefined {
   const { repeat, reminderDate } = reminder
-  if (!reminderDate) return null
+  if (!reminderDate) return undefined
 
   const lunar = dateToLunar(reminderDate)
 
@@ -23,13 +23,13 @@ export function getNextAlertDate(
 
   if (repeat === ZRepeatOption.enum.yearly) {
     const lunarNextYear = getLunarNextYear(lunar)
-    return lunarNextYear ? solarToDate(lunarNextYear.getSolar()) : null
+    return lunarNextYear ? solarToDate(lunarNextYear.getSolar()) : undefined
   }
 
   if (repeat === ZRepeatOption.enum.monthly) {
     const lunarNextMonth = getLunarNextMonth(lunar)
-    return lunarNextMonth ? solarToDate(lunarNextMonth.getSolar()) : null
+    return lunarNextMonth ? solarToDate(lunarNextMonth.getSolar()) : undefined
   }
 
-  return null
+  return undefined
 }

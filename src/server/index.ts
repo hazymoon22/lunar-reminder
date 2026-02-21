@@ -3,26 +3,47 @@ import { Hono } from 'hono'
 import {
   deleteReminder,
   insertReminder,
-  updateReminder
+  updateReminder,
+  updateReminderAlert
 } from '../db/reminder.ts'
-import { ZInsertReminder, ZUpdateReminder } from '../db/schema.ts'
+import { ZUpdateAlert, ZUpdateReminder } from '../db/schema.ts'
+import { auth } from '../lib/auth.ts'
+import { ZApiCreateReminder } from '../models/index.ts'
 import { getNextAlertDate } from './reminder.ts'
 
-const app = new Hono()
+const app = new Hono<{
+  Variables: {
+    user: typeof auth.$Infer.Session.user
+    session: typeof auth.$Infer.Session.session
+  }
+}>()
   .basePath('/api')
-  .get('/health', (c) => {
-    return c.json({
-      status: 'ok',
-      uptime: process.uptime(),
-      timestamp: new Date().toISOString()
-    })
+  .use('*', async (c, next) => {
+    if (c.req.path.startsWith('/api/auth')) return next()
+
+    const session = await auth.api.getSession({ headers: c.req.raw.headers })
+
+    if (!session) return c.json({ error: 'Unauthorized' }, 401)
+
+    c.set('user', session.user)
+    c.set('session', session.session)
+    await next()
   })
-  .post('/reminders', zValidator('json', ZInsertReminder), async (c) => {
+
+const routes = app
+  .on(['POST', 'GET'], '/auth/*', (c) => {
+    return auth.handler(c.req.raw)
+  })
+  .post('/reminders', zValidator('json', ZApiCreateReminder), async (c) => {
     try {
       const reminder = c.req.valid('json')
       const nextAlertDate = getNextAlertDate(reminder)
 
-      const insertReminderData = { ...reminder, nextAlertDate }
+      const insertReminderData = {
+        ...reminder,
+        nextAlertDate,
+        userId: c.get('user').id
+      }
       const id = await insertReminder(insertReminderData)
 
       return c.json({ id })
@@ -61,6 +82,19 @@ const app = new Hono()
       return c.json({ error: 'Internal server error' }, 500)
     }
   })
+  .patch('/alerts/:id', zValidator('json', ZUpdateAlert), async (c) => {
+    const id = c.req.param('id')
+
+    try {
+      const alert = c.req.valid('json')
+      await updateReminderAlert(id, alert)
+
+      return c.json({ message: 'Alert updated' })
+    } catch (error) {
+      console.error(error)
+      return c.json({ error: 'Internal server error' }, 500)
+    }
+  })
 
 export default app
-export type AppType = typeof app
+export type AppType = typeof routes
