@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import app from '../../server'
+import app from '../../server/index.ts'
 
 export const prerender = false
 

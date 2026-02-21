@@ -1,9 +1,11 @@
 ---
 import sanitizeHtml from 'sanitize-html'
+import CheckIcon from '../assets/icons/check.svg'
 import DeleteIcon from '../assets/icons/delete.svg'
 import EditIcon from '../assets/icons/edit.svg'
 import RepeatIcon from '../assets/icons/repeat.svg'
 import type { ReminderCard } from '../models'
+import { getLiveCollection } from 'astro:content'
 
 interface Props {
   reminder: ReminderCard
@@ -16,17 +18,24 @@ const sanitizeMailBody = sanitizeHtml(reminder.mailBody, {
     a: ['href', 'class']
   }
 })
+
+const { entries: alertEntries } = await getLiveCollection('alerts', {
+  reminderId: reminder.id
+})
+const alert = alertEntries?.[0]?.data
 ---
 
 <details
   class="reminder-card collapse bg-base-200 border-base-300 border shadow-accent shadow-sm min-w-full"
   data-reminder={JSON.stringify(reminder)}
+  data-alert={JSON.stringify(alert)}
 >
   <summary class="collapse-title">
     <div class="flex justify-between">
       <div class="flex flex-col">
         <span class="text-lg font-bold">
           {reminder.title}
+
           {
             reminder.dueIn === 'Expired' ? (
               <span class="badge badge-error badge-sm badge-soft ml-1">
@@ -35,6 +44,14 @@ const sanitizeMailBody = sanitizeHtml(reminder.mailBody, {
             ) : (
               <span class="badge badge-info badge-sm ml-1">
                 Due {reminder.dueIn !== 'Today' && 'in'} {reminder.dueIn}
+              </span>
+            )
+          }
+
+          {
+            alert && (
+              <span class="badge badge-outline badge-success badge-sm ml-1">
+                Active
               </span>
             )
           }
@@ -82,6 +99,22 @@ const sanitizeMailBody = sanitizeHtml(reminder.mailBody, {
       </div>
 
       <div>
+        {
+          alert && (
+            <div
+              class="tooltip tooltip-success tooltip-bottom"
+              data-tip="Acknowledge"
+            >
+              <button
+                data-id={alert.id}
+                class="btn btn-soft btn-square btn-success btn-acknowledge"
+              >
+                <CheckIcon width="20" height="20" />
+              </button>
+            </div>
+          )
+        }
+
         <div class="tooltip tooltip-primary tooltip-bottom" data-tip="Edit">
           <button
             data-id={reminder.id}
@@ -111,7 +144,7 @@ const sanitizeMailBody = sanitizeHtml(reminder.mailBody, {
 
 <script>
   import { hc } from 'hono/client'
-  import type { AppType } from '../server'
+  import type { AppType } from '../server/index.ts'
 
   const client = hc<AppType>('/')
 
@@ -152,6 +185,33 @@ const sanitizeMailBody = sanitizeHtml(reminder.mailBody, {
         } catch (err) {
           console.error(err)
           btnDelete.disabled = false
+        }
+      })
+    }
+
+    const btnAcknowledge = card.querySelector(
+      '.btn-acknowledge'
+    ) as HTMLButtonElement
+    if (btnAcknowledge) {
+      btnAcknowledge.addEventListener('click', async (e) => {
+        const confirmation = confirm('Acknowledge this alert?')
+        if (!confirmation || !card.dataset.alert) return
+
+        const alert = JSON.parse(card.dataset.alert)
+
+        try {
+          btnAcknowledge.disabled = true
+          const res = await client.api.alerts[':id'].$patch({
+            param: { id: alert.id },
+            json: { acknowledged: true }
+          })
+
+          if (!res.ok) throw new Error('Failed to acknowledge alert')
+
+          location.reload()
+        } catch (err) {
+          console.error(err)
+          btnAcknowledge.disabled = false
         }
       })
     }
