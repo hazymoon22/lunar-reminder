@@ -35,7 +35,7 @@ import MoonIcon from '../assets/icons/moon.svg'
   btnGoogleAuth?.addEventListener('click', async () => {
     await authClient.signIn.social({
       provider: 'google',
-      callbackURL: '/upcoming',
+      callbackURL: '/reminders',
       errorCallbackURL: APP_URL
     })
   })
