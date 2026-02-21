@@ -1,8 +1,8 @@
 <script lang="ts">
   import { hc } from 'hono/client'
   import { onMount } from "svelte"
-  import { ZInsertReminder, type InsertReminder } from "../db/schema"
-  import type { AppType } from "../server"
+  import { ZInsertReminder, type InsertReminder } from "../db/schema.ts"
+  import type { AppType } from "../server/index.ts"
   import ReminderForm from "./ReminderForm.svelte"
   import SaveIcon from "./SaveIcon.svelte"
 
@@ -13,6 +13,7 @@
     alertBefore: null,
     mailSubject: "",
     mailBody: "",
+    userId: ""
   })
 
   let isSaving = $state(false)
@@ -23,7 +24,7 @@
     const modal = document.getElementById("modal-reminder-detail") as HTMLDialogElement
     modal.showModal()
     if (event.detail) {
-      reminder = ZInsertReminder.parse(event.detail)
+      reminder = ZInsertReminder.parse({...reminder, ...event.detail})
     }
   }
 

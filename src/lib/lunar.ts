@@ -28,12 +28,12 @@ export function getLunarNextYear(lunar: Lunar): Lunar | null {
   const currentYear = lunar.getYear()
   const targetYear = currentYear + 1
   const month = Math.abs(lunar.getMonth()) // Ignore leap status for anniversary
-  let day = lunar.getDay()
+  const day = lunar.getDay()
   // Try to create the date. If it fails (e.g. 30th day in a 29-day month),
   // then we decide there is no equivalent date in the next year.
   try {
     return Lunar.fromYmd(targetYear, month, day)
-  } catch (e) {
+  } catch (_e) {
     return null
   }
 }
@@ -42,12 +42,12 @@ export function getLunarNextMonth(lunar: Lunar): Lunar | null {
   const currentYear = lunar.getYear()
   const currentMonth = lunar.getMonth()
   const targetMonth = currentMonth + 1
-  let day = lunar.getDay()
+  const day = lunar.getDay()
   // Try to create the date. If it fails (e.g. 30th day in a 29-day month),
   // then we decide there is no equivalent date in the next month.
   try {
     return Lunar.fromYmd(currentYear, targetMonth, day)
-  } catch (e) {
+  } catch (_e) {
     return null
   }
 }
