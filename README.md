@@ -37,7 +37,6 @@ lunar_reminder/
 │   │   └── DrawerLayout.astro      # Drawer layout with sidebar
 │   ├── pages/
 │   │   ├── index.astro             # Login page
-│   │   ├── upcoming.astro          # Upcoming reminders
 │   │   ├── reminders.astro         # All reminders
 │   │   └── auth/
 │   │       └── callback.astro      # OAuth callback (SSR)

@@ -1,9 +1,66 @@
 ---
 import { getLiveCollection } from 'astro:content'
-import ReminderList from '../components/ReminderList.astro'
+import DrawerLayout from '../layouts/DrawerLayout.astro'
+import PlusIcon from '../assets/icons/plus.svg'
+import Reminder from '../components/Reminder.astro'
+import ReminderModal from '../components/ReminderModal.svelte'
+import { ZReminderCard } from '../models'
+import { Lunar } from 'lunar-typescript'
+import { lunarToDate } from '../lib/lunar'
 
-const { entries } = await getLiveCollection('reminders')
+const { entries } = await getLiveCollection('reminders', {
+  userId: Astro.locals.session?.userId
+})
 const reminders = entries?.map((reminder) => reminder.data) ?? []
+const reminderCards = reminders.map((reminder) => {
+  if (!reminder.nextAlertDate) {
+    return ZReminderCard.parse({
+      ...reminder,
+      dueIn: 'Expired'
+    })
+  }
+
+  const nextAlertDateLunar = Lunar.fromDate(reminder.nextAlertDate!)
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+
+  const dueIn = Math.floor(
+    (reminder.nextAlertDate!.getTime() - now.getTime()) / 86400000
+  ) // Days
+
+  if (dueIn === 0) {
+    return ZReminderCard.parse({
+      ...reminder,
+      nextAlertDateLunar: lunarToDate(nextAlertDateLunar),
+      dueIn: 'Today'
+    })
+  }
+
+  return ZReminderCard.parse({
+    ...reminder,
+    nextAlertDateLunar: lunarToDate(nextAlertDateLunar),
+    dueIn: `${dueIn} day(s)`
+  })
+})
 ---
 
-<ReminderList {reminders} />
+<DrawerLayout>
+  {reminderCards?.map((reminder) => <Reminder {reminder} />)}
+
+  <button id="btn-add-reminder" class="btn btn-primary max-w-fit mt-2">
+    <PlusIcon width="20" height="20" />
+    Add Reminder
+  </button>
+
+  <ReminderModal client:load />
+
+  <script>
+    const btnAddReminder = document.getElementById('btn-add-reminder')
+    if (!btnAddReminder) throw new Error('Cannot find button and modal')
+
+    btnAddReminder.addEventListener('click', () => {
+      const event = new CustomEvent('modal-reminder-detail:open')
+      document.dispatchEvent(event)
+    })
+  </script>
+</DrawerLayout>
