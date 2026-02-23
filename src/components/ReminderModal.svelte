@@ -31,6 +31,7 @@
   async function createReminder() {
     isSaving = true
     try {
+      reminder.reminderDate.setHours(9, 0, 0, 0)
       const res = await client.api.reminders.$post({
         json: reminder
       })
@@ -48,7 +49,7 @@
     isSaving = true
     try {
       if (!reminder.id) throw new Error('Reminder ID is required')
-
+      reminder.reminderDate.setHours(9, 0, 0, 0)
       const res = await client.api.reminders[':id'].$patch({
         param: { id: reminder.id },
         json: reminder
