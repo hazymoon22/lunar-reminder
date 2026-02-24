@@ -6,18 +6,14 @@ import EditIcon from '../assets/icons/edit.svg'
 import RepeatIcon from '../assets/icons/repeat.svg'
 import type { ReminderCard } from '../models'
 import { getLiveCollection } from 'astro:content'
+import { sanitizeMailBody } from '../lib/mail.ts'
 
 interface Props {
   reminder: ReminderCard
 }
 
 const { reminder } = Astro.props
-const sanitizeMailBody = sanitizeHtml(reminder.mailBody, {
-  allowedTags: ['a', 'br'],
-  allowedAttributes: {
-    a: ['href', 'class']
-  }
-})
+const sanitizedMailBody = sanitizeMailBody(reminder.mailBody)
 
 const { entries: alertEntries } = await getLiveCollection('alerts', {
   reminderId: reminder.id
@@ -138,7 +134,7 @@ const alert = alertEntries?.[0]?.data
   <div class="collapse-content">
     <span class="text-lg font-semibold">{reminder.mailSubject}</span>
     <br />
-    <p set:html={sanitizeMailBody} />
+    <p set:html={sanitizedMailBody} />
   </div>
 </details>
 
