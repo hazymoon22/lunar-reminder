@@ -4,16 +4,18 @@ export function solarToDate(solar: Solar): Date {
   const year = solar.getYear()
   const month = solar.getMonth() - 1
   const day = solar.getDay()
+  const timestamp = Date.UTC(year, month, day)
 
-  return new Date(year, month, day)
+  return new Date(timestamp)
 }
 
 export function lunarToDate(lunar: Lunar): Date {
   const year = lunar.getYear()
-  const month = Math.abs(lunar.getMonth()) + 1
+  const month = Math.abs(lunar.getMonth()) - 1
   const day = lunar.getDay()
+  const timestamp = Date.UTC(year, month, day)
 
-  return new Date(year, month, day)
+  return new Date(timestamp)
 }
 
 export function dateToLunar(date: Date): Lunar {
