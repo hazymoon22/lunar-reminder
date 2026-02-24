@@ -2,6 +2,7 @@
   import { hc } from 'hono/client'
   import { onMount } from "svelte"
   import { ZInsertReminder, type InsertReminder } from "../db/schema.ts"
+  import { sanitizeMailBody } from '../lib/mail.ts'
   import type { AppType } from "../server/index.ts"
   import ReminderForm from "./ReminderForm.svelte"
   import SaveIcon from "./SaveIcon.svelte"
@@ -32,6 +33,7 @@
     isSaving = true
     try {
       reminder.reminderDate.setHours(9, 0, 0, 0)
+      reminder.mailBody = sanitizeMailBody(reminder.mailBody)
       const res = await client.api.reminders.$post({
         json: reminder
       })
@@ -50,6 +52,7 @@
     try {
       if (!reminder.id) throw new Error('Reminder ID is required')
       reminder.reminderDate.setHours(9, 0, 0, 0)
+      reminder.mailBody = sanitizeMailBody(reminder.mailBody)
       const res = await client.api.reminders[':id'].$patch({
         param: { id: reminder.id },
         json: reminder
