@@ -20,13 +20,21 @@ const reminderCards = reminders.map((reminder) => {
     })
   }
 
-  const nextAlertDateLunar = Lunar.fromDate(reminder.nextAlertDate!)
+  const nextAlertDateLunar = Lunar.fromDate(reminder.nextAlertDate)
   const now = new Date()
   now.setHours(0, 0, 0, 0)
 
   const dueIn = Math.floor(
     (reminder.nextAlertDate.getTime() - now.getTime()) / 86400000
   ) // Days
+
+  if (dueIn < 0) {
+    return ZReminderCard.parse({
+      ...reminder,
+      nextAlertDateLunar: lunarToDate(nextAlertDateLunar),
+      dueIn: 'Expired'
+    })
+  }
 
   if (dueIn === 0) {
     return ZReminderCard.parse({
