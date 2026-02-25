@@ -26,10 +26,26 @@ export function dateToLunar(date: Date): Lunar {
   return Lunar.fromYmd(year, month, day)
 }
 
+export function getLunarCurrentYear(lunar: Lunar): Lunar | null {
+  const now = new Date()
+  const year = now.getUTCFullYear()
+  const month = Math.abs(lunar.getMonth())
+  const day = lunar.getDay()
+
+  // Try to create the date. If it fails (e.g. 30th day in a 29-day month),
+  // then we decide there is no equivalent date in the next year.
+  try {
+    return Lunar.fromYmd(year, month, day)
+  } catch (_e) {
+    return null
+  }
+}
+
 export function getLunarNextYear(lunar: Lunar): Lunar | null {
-  const currentYear = lunar.getYear()
+  const now = new Date()
+  const currentYear = now.getUTCFullYear()
   const targetYear = currentYear + 1
-  const month = Math.abs(lunar.getMonth()) // Ignore leap status for anniversary
+  const month = Math.abs(lunar.getMonth())
   const day = lunar.getDay()
   // Try to create the date. If it fails (e.g. 30th day in a 29-day month),
   // then we decide there is no equivalent date in the next year.
@@ -40,9 +56,25 @@ export function getLunarNextYear(lunar: Lunar): Lunar | null {
   }
 }
 
+export function getLunarCurrentMonth(lunar: Lunar): Lunar | null {
+  const now = new Date()
+  const year = now.getUTCFullYear()
+  const month = now.getUTCMonth() + 1
+  const day = lunar.getDay()
+
+  // Try to create the date. If it fails (e.g. 30th day in a 29-day month),
+  // then we decide there is no equivalent date in the next month.
+  try {
+    return Lunar.fromYmd(year, month, day)
+  } catch (_e) {
+    return null
+  }
+}
+
 export function getLunarNextMonth(lunar: Lunar): Lunar | null {
-  const currentYear = lunar.getYear()
-  const currentMonth = lunar.getMonth()
+  const now = new Date()
+  const currentYear = now.getUTCFullYear()
+  const currentMonth = now.getUTCMonth()
   const targetMonth = currentMonth + 1
   const day = lunar.getDay()
   // Try to create the date. If it fails (e.g. 30th day in a 29-day month),
