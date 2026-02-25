@@ -2,9 +2,16 @@
 import Main from '../components/Main.astro'
 import Sidebar from '../components/Sidebar.astro'
 import Layout from './Layout.astro'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const { title, description } = Astro.props as Props
 ---
 
-<Layout>
+<Layout title={title} description={description}>
   <div class="drawer lg:drawer-open">
     <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
 
