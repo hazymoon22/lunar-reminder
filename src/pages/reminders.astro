@@ -52,7 +52,10 @@ const reminderCards = reminders.map((reminder) => {
 })
 ---
 
-<DrawerLayout>
+<DrawerLayout
+  title="My Reminders | Lunar Reminder"
+  description="View and manage your lunar-calendar reminders, upcoming alert dates, and notification status."
+>
   {reminderCards?.map((reminder) => <Reminder {reminder} />)}
 
   <button id="btn-add-reminder" class="btn btn-primary max-w-fit mt-2">

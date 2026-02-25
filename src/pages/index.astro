@@ -11,7 +11,10 @@ if (session?.user && getAllowedEmails().includes(session.user.email)) {
 }
 ---
 
-<Layout>
+<Layout
+  title="Lunar Reminder | Lunar Calendar Event Alerts"
+  description="Sign in with Google to manage lunar-calendar reminders and get timely alert emails for important dates."
+>
   <div class="min-h-screen flex items-center justify-center bg-base-200 p-4">
     <GoogleSignInCard />
   </div>
