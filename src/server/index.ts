@@ -8,6 +8,7 @@ import {
 } from '../db/reminder.ts'
 import { ZUpdateAlert, ZUpdateReminder } from '../db/schemas/app.ts'
 import { auth } from '../lib/auth.ts'
+import { NotFoundError } from '../lib/error.ts'
 import { ZApiCreateReminder } from '../models/index.ts'
 import { getNextAlertDate } from './reminder.ts'
 
@@ -62,10 +63,14 @@ const routes = app
         const nextAlertDate = getNextAlertDate(reminder)
         updateReminderData = { ...reminder, nextAlertDate }
       }
-      await updateReminder(id, updateReminderData)
+      await updateReminder(id, c.get('user').id, updateReminderData)
 
       return c.json({ message: 'Reminder updated' })
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return c.json({ error: error.message }, 404)
+      }
+
       console.error(error)
       return c.json({ error: 'Internal server error' }, 500)
     }
@@ -74,10 +79,14 @@ const routes = app
     const id = c.req.param('id')
 
     try {
-      await deleteReminder(id)
+      await deleteReminder(id, c.get('user').id)
 
       return c.json({ message: 'Reminder deleted' })
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return c.json({ error: error.message }, 404)
+      }
+
       console.error(error)
       return c.json({ error: 'Internal server error' }, 500)
     }
@@ -87,10 +96,14 @@ const routes = app
 
     try {
       const alert = c.req.valid('json')
-      await updateReminderAlert(id, alert)
+      await updateReminderAlert(id, c.get('user').id, alert)
 
       return c.json({ message: 'Alert updated' })
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return c.json({ error: error.message }, 404)
+      }
+
       console.error(error)
       return c.json({ error: 'Internal server error' }, 500)
     }
