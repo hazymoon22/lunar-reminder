@@ -11,10 +11,13 @@ type NavItem = {
   icon: SvgComponent
 }
 
+const isAdmin = Astro.locals.user?.role === 'admin' || false
 const navItems: NavItem[] = [
-  { name: 'Reminders', href: '/reminders', icon: ReminderIcon },
-  { name: 'Admin', href: '/users', icon: AdminIcon }
+  { name: 'Reminders', href: '/reminders', icon: ReminderIcon }
 ]
+if (isAdmin) {
+  navItems.push({ name: 'Admin', href: '/admin', icon: AdminIcon })
+}
 
 function isActive(href: string) {
   const currentPath = Astro.url.pathname

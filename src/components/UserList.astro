@@ -1,0 +1,18 @@
+---
+import type { SelectUser } from '../db/schemas/auth.ts'
+import User from './User.astro'
+
+interface Props {
+  users: SelectUser[]
+}
+
+const { users } = Astro.props
+---
+
+<ul
+  class="list bg-base-200 rounded-box shadow-sm shadow-accent border border-base-300"
+>
+  <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Whitelist Users</li>
+
+  {users.map((user) => <User user={user} />)}
+</ul>

@@ -25,6 +25,9 @@ const authenticate = defineMiddleware(async (context, next) => {
 
   if (!session) return context.redirect('/')
 
+  const isAdmin = session.user.role === 'admin'
+  if (path.startsWith('/admin') && !isAdmin) return context.redirect('/')
+
   // Store session in context.locals for use in pages
   context.locals.user = session.user ?? null
   context.locals.session = session.session ?? null

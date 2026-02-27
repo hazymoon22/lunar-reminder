@@ -1,0 +1,34 @@
+---
+import { getLiveCollection } from 'astro:content'
+import DrawerLayout from '../layouts/DrawerLayout.astro'
+import PlusIcon from '../assets/icons/plus.svg'
+import UserList from '../components/UserList.astro'
+import UserModal from '../components/UserModal.svelte'
+
+const { entries } = await getLiveCollection('users')
+const users = entries?.map((entry) => entry.data) ?? []
+---
+
+<DrawerLayout
+  title="My Reminders | Lunar Reminder"
+  description="View and manage your lunar-calendar reminders, upcoming alert dates, and notification status."
+>
+  <UserList users={users} />
+
+  <button id="btn-add-user" class="btn btn-primary max-w-fit mt-2">
+    <PlusIcon width="20" height="20" />
+    Add User
+  </button>
+
+  <UserModal client:load />
+
+  <script>
+    const btnAddUser = document.getElementById('btn-add-user')
+    if (!btnAddUser) throw new Error('Cannot find button and modal')
+
+    btnAddUser.addEventListener('click', () => {
+      const event = new CustomEvent('modal-user:open')
+      document.dispatchEvent(event)
+    })
+  </script>
+</DrawerLayout>

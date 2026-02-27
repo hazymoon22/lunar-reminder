@@ -1,14 +1,14 @@
 import { APP_URL } from 'astro:env/client'
 import {
-  ALLOWED_EMAILS,
   BETTER_AUTH_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET
 } from 'astro:env/server'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { admin } from 'better-auth/plugins'
 import { db } from '../db/index.ts'
-import * as schema from '../db/schema.ts'
+import * as schema from '../db/schemas/auth.ts'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -24,22 +24,10 @@ export const auth = betterAuth({
   socialProviders: {
     google: {
       clientId: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET
+      clientSecret: GOOGLE_CLIENT_SECRET,
+      disableSignUp: true,
+      overrideUserInfoOnSignIn: true
     }
   },
-  databaseHooks: {
-    user: {
-      create: {
-        before: (user) => {
-          const allowedEmails = getAllowedEmails()
-          return Promise.resolve(allowedEmails.includes(user.email))
-        }
-      }
-    }
-  }
+  plugins: [admin()]
 })
-
-export function getAllowedEmails() {
-  const allowedEmails = ALLOWED_EMAILS.split(',')
-  return allowedEmails.map((email) => email.trim())
-}

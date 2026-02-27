@@ -1,7 +1,7 @@
 <script lang="ts">
   import { hc } from 'hono/client'
   import { onMount } from "svelte"
-  import { ZInsertReminder, type InsertReminder } from "../db/schema.ts"
+  import { ZInsertReminder, type InsertReminder } from "../db/schemas/app.ts"
   import { sanitizeMailBody } from '../lib/mail.ts'
   import type { AppType } from "../server/index.ts"
   import ReminderForm from "./ReminderForm.svelte"

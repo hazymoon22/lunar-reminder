@@ -1,0 +1,77 @@
+---
+import DeleteIcon from '../assets/icons/delete.svg'
+import type { SelectUser } from '../db/schemas/auth.ts'
+
+interface Props {
+  user: SelectUser
+}
+
+const { user } = Astro.props
+const isAdmin = user.role === 'admin' || false
+---
+
+<li class="list-row user" data-id={user.id}>
+  <div>
+    <img class="size-10 rounded-box" src={user.image} alt="Avatar" />
+  </div>
+
+  <div>
+    <div>
+      <span class="mr-1">{user.name}</span>
+
+      {
+        isAdmin ? (
+          <span class="badge badge-sm badge-soft badge-success">Admin</span>
+        ) : (
+          <span class="badge badge-sm badge-soft badge-info">User</span>
+        )
+      }
+    </div>
+
+    <div class="text-xs font-semibold opacity-60">
+      {user.email}
+    </div>
+  </div>
+
+  <div class="tooltip tooltip-error" data-tip="Delete">
+    <button
+      data-id={user.id}
+      class="btn-delete btn btn-soft btn-error btn-square"
+    >
+      <DeleteIcon width="20" height="20" />
+    </button>
+  </div>
+</li>
+
+<script>
+  import { authClient } from '../lib/auth-client.ts'
+
+  const userListItems = document.querySelectorAll(
+    '.user'
+  ) as NodeListOf<HTMLElement>
+  userListItems.forEach((user) => {
+    if (!user.dataset.id) return
+
+    const btnDelete = user.querySelector('.btn-delete') as HTMLButtonElement
+    if (btnDelete) {
+      btnDelete.addEventListener('click', async (e) => {
+        const confirmation = confirm('Delete this user?')
+        if (!confirmation) return
+
+        try {
+          btnDelete.disabled = true
+          const { error } = await authClient.admin.removeUser({
+            userId: user.dataset.id
+          })
+
+          if (error) throw new Error('Failed to delete user')
+
+          location.reload()
+        } catch (err) {
+          console.error(err)
+          btnDelete.disabled = false
+        }
+      })
+    }
+  })
+</script>

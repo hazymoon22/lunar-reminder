@@ -33,9 +33,7 @@ export default defineConfig({
       BETTER_AUTH_SECRET: envField.string({
         context: 'server',
         access: 'secret'
-      }),
-      ALLOWED_EMAILS: envField.string({ context: 'server', access: 'secret' }),
-      ADMIN: envField.string({ context: 'server', access: 'secret' })
+      })
     }
   },
 
