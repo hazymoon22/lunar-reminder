@@ -7,7 +7,6 @@ VALUES (
 )
 ON CONFLICT ("email")
 DO UPDATE SET
-  "id" = EXCLUDED."id",
   "name" = EXCLUDED."name",
   "email" = EXCLUDED."email",
   "role" = EXCLUDED."role";
