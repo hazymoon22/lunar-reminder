@@ -8,25 +8,29 @@ const authenticate = defineMiddleware(async (context, next) => {
    */
   const path = context.url.pathname
 
-  // Check if current path is public
-  const isPublicPath =
-    path === '/' || // Home page (exact match)
-    path.startsWith('/api') // Better Auth API and Hono API routes
+  const isHomepage = path === '/' // Home page (exact match)
+  const isApiPath = path.startsWith('/api') // Better Auth API and Hono API routes
+  const isAdminPath = path.startsWith('/admin')
 
-  // Allow public paths without authentication
-  if (isPublicPath) {
-    return next()
-  }
+  // Allow api paths
+  // Hono API routes will be protected by Hono middleware.
+  if (isApiPath) return next()
 
   // Fetch session for all requests (makes it available in pages)
   const session = await auth.api.getSession({
     headers: context.request.headers
   })
 
-  if (!session) return context.redirect('/')
+  if (!session) {
+    if (isHomepage) return next()
+
+    return context.redirect('/')
+  }
+
+  if (isHomepage) return context.redirect('/reminders')
 
   const isAdmin = session.user.role === 'admin'
-  if (path.startsWith('/admin') && !isAdmin) return context.redirect('/')
+  if (isAdminPath && !isAdmin) return context.redirect('/')
 
   // Store session in context.locals for use in pages
   context.locals.user = session.user ?? null
