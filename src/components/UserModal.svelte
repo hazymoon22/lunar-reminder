@@ -8,7 +8,6 @@
   let isSaving = $state(false)
 
   async function createUser() {
-    console.log(email)
     if (!email) return
 
     try {
