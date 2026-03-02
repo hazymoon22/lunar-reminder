@@ -1,44 +1,44 @@
 // @ts-check
-import deno from '@deno/astro-adapter'
-import tailwindcss from '@tailwindcss/vite'
-import { defineConfig, envField } from 'astro/config'
+import deno from "@deno/astro-adapter";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig, envField } from "astro/config";
 
-import svelte from '@astrojs/svelte'
+import svelte from "@astrojs/svelte";
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',
+  output: "server",
   adapter: deno(),
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
   },
 
   env: {
     schema: {
       GOOGLE_CLIENT_ID: envField.string({
-        context: 'server',
-        access: 'secret'
+        context: "server",
+        access: "secret",
       }),
       GOOGLE_CLIENT_SECRET: envField.string({
-        context: 'server',
-        access: 'secret'
+        context: "server",
+        access: "secret",
       }),
-      DATABASE_URL: envField.string({ context: 'server', access: 'secret' }),
+      DATABASE_URL: envField.string({ context: "server", access: "secret" }),
       APP_URL: envField.string({
-        context: 'client',
-        access: 'public',
-        default: 'http://localhost:4321'
+        context: "client",
+        access: "public",
+        default: "http://localhost:4321",
       }),
       BETTER_AUTH_SECRET: envField.string({
-        context: 'server',
-        access: 'secret'
-      })
-    }
+        context: "server",
+        access: "secret",
+      }),
+    },
   },
 
   integrations: [svelte()],
   experimental: {
-    liveContentCollections: true
-  }
-})
+    liveContentCollections: true,
+  },
+});
