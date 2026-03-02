@@ -1,4 +1,13 @@
 {
+  "tasks": {
+    "dev": "deno run -A npm:astro dev",
+    "build": "deno run -A npm:astro build",
+    "preview": "deno run --allow-net --allow-read --allow-env --env ./dist/server/entry.mjs",
+    "astro": "deno run -A npm:astro",
+    "test": "deno run -A npm:vitest run",
+    "test:watch": "deno run -A npm:vitest",
+    "git-hooks": "lefthook install"
+  },
   "compilerOptions": {
     "types": ["./.astro/env.d.ts"]
   },

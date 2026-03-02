@@ -2,14 +2,6 @@
   "name": "lunar-reminder",
   "type": "module",
   "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "deno run --allow-net --allow-read --allow-env --env ./dist/server/entry.mjs",
-    "astro": "astro",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
   "dependencies": {
     "@astrojs/svelte": "^7.2.5",
     "@deno/astro-adapter": "^0.3.2",

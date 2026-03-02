@@ -1,10 +1,12 @@
 # 🌙 Lunar Reminder
 
-A modern web application for managing reminders based on the lunar calendar. Built with Astro, Tailwind CSS, DaisyUI, and Deno.
+A modern web application for managing reminders based on the lunar calendar.
+Built with Astro, Tailwind CSS, DaisyUI, and Deno.
 
 ## ✨ Features
 
-- 🌙 **Lunar Calendar Integration** - Track events based on the lunar calendar system
+- 🌙 **Lunar Calendar Integration** - Track events based on the lunar calendar
+  system
 - 🔐 **Google OAuth Authentication** - Secure sign-in with Google accounts
 - 📱 **Responsive Design** - Mobile-first UI with DaisyUI components
 - 🎨 **Theme Support** - Beautiful sunset theme powered by DaisyUI
@@ -16,7 +18,8 @@ A modern web application for managing reminders based on the lunar calendar. Bui
 - **Framework**: [Astro](https://astro.build) - Modern web framework
 - **Runtime**: [Deno](https://deno.land) - Secure JavaScript/TypeScript runtime
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com) - Utility-first CSS
-- **UI Components**: [DaisyUI](https://daisyui.com) - Tailwind CSS component library
+- **UI Components**: [DaisyUI](https://daisyui.com) - Tailwind CSS component
+  library
 - **Rendering**: Hybrid (Static + SSR with Deno adapter)
 
 ## 📁 Project Structure
@@ -56,38 +59,71 @@ lunar_reminder/
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <your-repo-url>
 cd lunar_reminder
 ```
 
 2. Install dependencies:
+
 ```bash
 deno install
 ```
 
-3. Start the development server:
+3. Install and enable git hooks (one-time per clone):
+
+```bash
+deno task git-hooks
+```
+
+4. Start the development server:
+
 ```bash
 deno task dev
 ```
 
-4. Open your browser at `http://localhost:4321`
+5. Open your browser at `http://localhost:4321`
 
 ## 📝 Available Commands
 
 All commands are run from the root of the project:
 
-| Command | Action |
-|---------|--------|
-| `deno install` | Install dependencies |
-| `deno task dev` | Start dev server at `localhost:4321` |
-| `deno task build` | Build production site to `./dist/` |
-| `deno task preview` | Preview production build locally |
-| `deno task astro` | Run Astro CLI commands |
+| Command                | Action                               |
+| ---------------------- | ------------------------------------ |
+| `deno install`         | Install dependencies                 |
+| `deno task dev`        | Start dev server at `localhost:4321` |
+| `deno task build`      | Build production site to `./dist/`   |
+| `deno task preview`    | Preview production build locally     |
+| `deno task astro`      | Run Astro CLI commands               |
+| `deno task test`       | Run unit tests with Vitest           |
+| `deno task test:watch` | Run Vitest in watch mode             |
+| `deno task git-hooks`  | Install Lefthook git hooks           |
+
+## ✅ Git Hooks (Lefthook)
+
+This project uses [Lefthook](https://github.com/evilmartians/lefthook) for
+shared git hooks.
+
+- `pre-commit` (fast): runs staged-only checks for JS/TS files:
+  - `deno fmt`
+  - `deno lint`
+  - `deno check`
+- `pre-push` (full): runs full-repo checks:
+  - `deno fmt`
+  - `deno lint`
+  - `deno check src/**/*.ts`
+
+One-time setup after cloning:
+
+```bash
+deno task git-hooks
+```
 
 ## 🎨 Theming
 
-The app uses DaisyUI's **sunset** theme by default. To change the theme, edit `src/styles/global.css`:
+The app uses DaisyUI's **sunset** theme by default. To change the theme, edit
+`src/styles/global.css`:
 
 ```css
 @plugin "daisyui" {
@@ -95,7 +131,8 @@ The app uses DaisyUI's **sunset** theme by default. To change the theme, edit `s
 }
 ```
 
-Available themes: light, dark, cupcake, bumblebee, emerald, corporate, synthwave, retro, cyberpunk, and more.
+Available themes: light, dark, cupcake, bumblebee, emerald, corporate,
+synthwave, retro, cyberpunk, and more.
 
 ## 🔧 Configuration
 
@@ -108,6 +145,7 @@ Available themes: light, dark, cupcake, bumblebee, emerald, corporate, synthwave
 ### SSR Pages
 
 Pages with `export const prerender = false` are rendered on-demand:
+
 - `/auth/callback` - OAuth callback handler
 
 All other pages are statically generated at build time.
@@ -125,13 +163,17 @@ This project is currently in development. Planned features:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details.
 
-This is a personal hobby project. Feel free to use, modify, and learn from the code!
+This is a personal hobby project. Feel free to use, modify, and learn from the
+code!
 
 ## 🤝 Contributing
 
-This is primarily a personal project, but contributions, suggestions, and feedback are welcome! Feel free to:
+This is primarily a personal project, but contributions, suggestions, and
+feedback are welcome! Feel free to:
+
 - Open an issue for bugs or feature requests
 - Submit a Pull Request
 - Fork the project and make it your own
