@@ -1,4 +1,5 @@
-/// <reference path="../.astro/types.d.ts" />
+/// <reference types="astro/client" />
+/// <reference path="../.astro/env.d.ts" />
 
 type AuthSession = NonNullable<
   Awaited<ReturnType<typeof import('./lib/auth.ts').auth.api.getSession>>

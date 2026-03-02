@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "types": ["./.astro/env.d.ts"]
+  },
+  "exclude": ["dist/", ".astro/"]
+}
