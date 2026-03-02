@@ -1,9 +1,9 @@
-import { getViteConfig } from 'astro/config'
+import { getViteConfig } from "astro/config";
 
 export default getViteConfig({
   test: {
-    environment: 'node',
-    include: ['src/**/*.test.ts'],
-    globals: true
-  }
-})
+    environment: "node",
+    include: ["src/**/*.test.ts"],
+    globals: true,
+  },
+});

@@ -1,113 +1,113 @@
-import { zValidator } from '@hono/zod-validator'
-import { Hono } from 'hono'
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 import {
   deleteReminder,
   insertReminder,
   updateReminder,
-  updateReminderAlert
-} from '../db/reminder.ts'
-import { ZUpdateAlert, ZUpdateReminder } from '../db/schemas/app.ts'
-import { auth } from '../lib/auth.ts'
-import { NotFoundError } from '../lib/error.ts'
-import { ZApiCreateReminder } from '../models/index.ts'
-import { getNextAlertDate } from './reminder.ts'
+  updateReminderAlert,
+} from "../db/reminder.ts";
+import { ZUpdateAlert, ZUpdateReminder } from "../db/schemas/app.ts";
+import { auth } from "../lib/auth.ts";
+import { NotFoundError } from "../lib/error.ts";
+import { ZApiCreateReminder } from "../models/index.ts";
+import { getNextAlertDate } from "./reminder.ts";
 
 const app = new Hono<{
   Variables: {
-    user: typeof auth.$Infer.Session.user
-    session: typeof auth.$Infer.Session.session
-  }
+    user: typeof auth.$Infer.Session.user;
+    session: typeof auth.$Infer.Session.session;
+  };
 }>()
-  .basePath('/api')
-  .use('*', async (c, next) => {
-    if (c.req.path.startsWith('/api/auth')) return next()
+  .basePath("/api")
+  .use("*", async (c, next) => {
+    if (c.req.path.startsWith("/api/auth")) return next();
 
-    const session = await auth.api.getSession({ headers: c.req.raw.headers })
+    const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
-    if (!session) return c.json({ error: 'Unauthorized' }, 401)
+    if (!session) return c.json({ error: "Unauthorized" }, 401);
 
-    c.set('user', session.user)
-    c.set('session', session.session)
-    await next()
-  })
+    c.set("user", session.user);
+    c.set("session", session.session);
+    await next();
+  });
 
 const routes = app
-  .on(['POST', 'GET'], '/auth/*', (c) => {
-    return auth.handler(c.req.raw)
+  .on(["POST", "GET"], "/auth/*", (c) => {
+    return auth.handler(c.req.raw);
   })
-  .post('/reminders', zValidator('json', ZApiCreateReminder), async (c) => {
+  .post("/reminders", zValidator("json", ZApiCreateReminder), async (c) => {
     try {
-      const reminder = c.req.valid('json')
-      const nextAlertDate = getNextAlertDate(reminder)
+      const reminder = c.req.valid("json");
+      const nextAlertDate = getNextAlertDate(reminder);
 
       const insertReminderData = {
         ...reminder,
         nextAlertDate,
-        userId: c.get('user').id
-      }
-      const id = await insertReminder(insertReminderData)
+        userId: c.get("user").id,
+      };
+      const id = await insertReminder(insertReminderData);
 
-      return c.json({ id })
+      return c.json({ id });
     } catch (error) {
-      console.error(error)
-      return c.json({ error: 'Internal server error' }, 500)
+      console.error(error);
+      return c.json({ error: "Internal server error" }, 500);
     }
   })
-  .patch('/reminders/:id', zValidator('json', ZUpdateReminder), async (c) => {
-    const id = c.req.param('id')
+  .patch("/reminders/:id", zValidator("json", ZUpdateReminder), async (c) => {
+    const id = c.req.param("id");
 
     try {
-      const reminder = c.req.valid('json')
-      let updateReminderData = reminder
+      const reminder = c.req.valid("json");
+      let updateReminderData = reminder;
       if (reminder.reminderDate) {
-        const nextAlertDate = getNextAlertDate(reminder)
-        updateReminderData = { ...reminder, nextAlertDate }
+        const nextAlertDate = getNextAlertDate(reminder);
+        updateReminderData = { ...reminder, nextAlertDate };
       }
-      await updateReminder(id, c.get('user').id, updateReminderData)
+      await updateReminder(id, c.get("user").id, updateReminderData);
 
-      return c.json({ message: 'Reminder updated' })
+      return c.json({ message: "Reminder updated" });
     } catch (error) {
       if (error instanceof NotFoundError) {
-        return c.json({ error: error.message }, 404)
+        return c.json({ error: error.message }, 404);
       }
 
-      console.error(error)
-      return c.json({ error: 'Internal server error' }, 500)
+      console.error(error);
+      return c.json({ error: "Internal server error" }, 500);
     }
   })
-  .delete('/reminders/:id', async (c) => {
-    const id = c.req.param('id')
+  .delete("/reminders/:id", async (c) => {
+    const id = c.req.param("id");
 
     try {
-      await deleteReminder(id, c.get('user').id)
+      await deleteReminder(id, c.get("user").id);
 
-      return c.json({ message: 'Reminder deleted' })
+      return c.json({ message: "Reminder deleted" });
     } catch (error) {
       if (error instanceof NotFoundError) {
-        return c.json({ error: error.message }, 404)
+        return c.json({ error: error.message }, 404);
       }
 
-      console.error(error)
-      return c.json({ error: 'Internal server error' }, 500)
+      console.error(error);
+      return c.json({ error: "Internal server error" }, 500);
     }
   })
-  .patch('/alerts/:id', zValidator('json', ZUpdateAlert), async (c) => {
-    const id = c.req.param('id')
+  .patch("/alerts/:id", zValidator("json", ZUpdateAlert), async (c) => {
+    const id = c.req.param("id");
 
     try {
-      const alert = c.req.valid('json')
-      await updateReminderAlert(id, c.get('user').id, alert)
+      const alert = c.req.valid("json");
+      await updateReminderAlert(id, c.get("user").id, alert);
 
-      return c.json({ message: 'Alert updated' })
+      return c.json({ message: "Alert updated" });
     } catch (error) {
       if (error instanceof NotFoundError) {
-        return c.json({ error: error.message }, 404)
+        return c.json({ error: error.message }, 404);
       }
 
-      console.error(error)
-      return c.json({ error: 'Internal server error' }, 500)
+      console.error(error);
+      return c.json({ error: "Internal server error" }, 500);
     }
-  })
+  });
 
-export default app
-export type AppType = typeof routes
+export default app;
+export type AppType = typeof routes;

@@ -1,7 +1,8 @@
-This project is a Lunar Reminder application.
-The function of this application is to remind users of events based on the lunar calendar.
+This project is a Lunar Reminder application. The function of this application
+is to remind users of events based on the lunar calendar.
 
 Tech Stack:
+
 - Astro V5
 - Tailwind CSS
 - DaisyUI
@@ -11,4 +12,5 @@ Tech Stack:
 - Drizzle for ORM
 
 Work approach:
+
 - Always give me solution and idea first before changing code or run command.
