@@ -1,11 +1,11 @@
 output:
-- failure
+  - failure
 
 pre-commit:
   parallel: true
   commands:
     fmt:
-      glob: "*.{ts,tsx,js,mjs}"
+      glob: "*.{ts,tsx,js,mjs,yml}"
       run: |
         deno fmt {staged_files}
         git diff --quiet -- {staged_files} || (
@@ -26,4 +26,4 @@ pre-push:
     lint:
       run: deno lint
     check:
-      run: deno check src/**/*.ts
+      run: deno check
