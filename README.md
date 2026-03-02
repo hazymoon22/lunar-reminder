@@ -71,7 +71,8 @@ cd lunar_reminder
 deno install
 ```
 
-3. Install and enable git hooks (one-time per clone):
+3. Install and enable git hooks (one-time per clone): Install
+   [Lefthook](https://github.com/evilmartians/lefthook?tab=readme-ov-file#install)
 
 ```bash
 deno task git-hooks
