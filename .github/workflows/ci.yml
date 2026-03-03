@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review, closed]
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      neon_branch_name: ${{ steps.branch_name.outputs.name }}
+    steps:
+      - name: Build Neon PR branch name
+        id: branch_name
+        shell: bash
+        run: |
+          # lowercase, replace invalid chars with '-', trim repeated '-', cap length
+          slug="$(echo "${{ github.head_ref }}" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed -E 's/[^a-z0-9-]+/-/g; s/^-+//; s/-+$//; s/-+/-/g' \
+            | cut -c1-40)"
+          echo "name=pr-${{ github.event.pull_request.number }}-${slug}" >> "$GITHUB_OUTPUT"
+
+  unit-test:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: lts
+
+      - name: Install dependencies
+        run: deno install
+
+      - name: Unit tests
+        run: deno task test
+
+  integration-test:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    needs: [prepare, unit-test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: lts
+
+      - name: Install dependencies
+        run: deno install
+
+      - name: Ensure Neon PR branch exists
+        id: neon_create
+        uses: neondatabase/create-branch-action@v6
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          branch_name: ${{ needs.prepare.outputs.neon_branch_name }}
+          parent_branch: production
+          api_key: ${{ secrets.NEON_API_KEY }}
+
+      - name: Reset Neon PR branch from parent
+        id: neon_reset
+        uses: neondatabase/reset-branch-action@v1
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          branch: ${{ needs.prepare.outputs.neon_branch_name }}
+          parent: true
+          api_key: ${{ secrets.NEON_API_KEY }}
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: ${{ steps.neon_reset.outputs.db_url }}
+        run: |
+          # use your actual migration command
+          deno run -A npm:drizzle-kit migrate
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: ${{ steps.neon_reset.outputs.db_url }}
+        run: |
+          # define this task in deno.json
+          deno task test:integration
+
+  cleanup-neon-branch:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    needs: prepare
+
+    steps:
+      - name: Delete Neon PR branch
+        uses: neondatabase/delete-branch-action@v3
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          branch: ${{ needs.prepare.outputs.neon_branch_name }}
+          api_key: ${{ secrets.NEON_API_KEY }}
