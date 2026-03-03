@@ -2,6 +2,7 @@ import type { LiveLoader } from "astro/loaders";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import process from "node:process";
+import { db, type DbClient } from "../db/index.ts";
 import { getReminders } from "../db/reminder.ts";
 import type { SelectReminder } from "../db/schemas/app.ts";
 
@@ -13,11 +14,9 @@ type CollectionFilter = {
   userId?: string;
 };
 
-export function reminderLoader(): LiveLoader<
-  SelectReminder,
-  EntryFilter,
-  CollectionFilter
-> {
+export function reminderLoader(
+  database: DbClient = db,
+): LiveLoader<SelectReminder, EntryFilter, CollectionFilter> {
   return {
     name: "reminder-loader",
 
@@ -25,7 +24,7 @@ export function reminderLoader(): LiveLoader<
       try {
         if (!filter?.userId) return { entries: [] };
 
-        const reminders = await getReminders(filter?.userId);
+        const reminders = await getReminders(filter?.userId, database);
         const entries = reminders.map((reminder) => ({
           id: reminder.id,
           data: reminder,

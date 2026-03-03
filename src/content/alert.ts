@@ -2,6 +2,7 @@ import type { LiveLoader } from "astro/loaders";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import process from "node:process";
+import { db, type DbClient } from "../db/index.ts";
 import { getReminderAlerts } from "../db/reminder.ts";
 import type { SelectAlert } from "../db/schemas/app.ts";
 
@@ -13,11 +14,9 @@ type CollectionFilter = {
   reminderId?: string;
 };
 
-export function alertLoader(): LiveLoader<
-  SelectAlert,
-  EntryFilter,
-  CollectionFilter
-> {
+export function alertLoader(
+  database: DbClient = db,
+): LiveLoader<SelectAlert, EntryFilter, CollectionFilter> {
   return {
     name: "alert-loader",
 
@@ -25,7 +24,7 @@ export function alertLoader(): LiveLoader<
       try {
         if (!filter?.reminderId) return { entries: [] };
 
-        const alerts = await getReminderAlerts(filter?.reminderId);
+        const alerts = await getReminderAlerts(filter?.reminderId, database);
         const entries = alerts.map((alert) => ({
           id: alert.id,
           data: alert,

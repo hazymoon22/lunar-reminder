@@ -84,6 +84,9 @@ jobs:
       - name: Run integration tests
         env:
           DATABASE_URL: ${{ steps.neon_reset.outputs.db_url }}
+          GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
         run: |
           # define this task in deno.json
           deno task test:integration
