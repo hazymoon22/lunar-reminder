@@ -2,30 +2,11 @@ import { describe, expect, it } from "vitest";
 import { reminder } from "../db/schemas/app.ts";
 import { user } from "../db/schemas/auth.ts";
 import {
+  createReminderSeed,
   createUserSeed,
   withRollbackTx,
-} from "../lib/integration-test-utils.ts";
+} from "../lib/testing.ts";
 import { reminderLoader } from "./reminder.ts";
-
-function createReminderSeed(
-  userId: string,
-  title: string,
-  nextAlertDate: Date,
-) {
-  return {
-    id: crypto.randomUUID(),
-    title,
-    reminderDate: new Date("2026-06-01T00:00:00.000Z"),
-    nextAlertDate,
-    userId,
-    repeat: null,
-    alertBefore: 1,
-    mailSubject: "Mail subject",
-    mailBody: "<p>Mail body</p>",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-}
 
 describe("reminderLoader integration", () => {
   it("loadCollection returns empty entries when filter has no userId", async () => {
@@ -50,18 +31,27 @@ describe("reminderLoader integration", () => {
 
       const ownerFirst = createReminderSeed(
         owner.id,
-        "Owner earlier",
-        new Date("2026-05-01T00:00:00.000Z"),
+        {
+          title: "Owner earlier",
+          nextAlertDate: new Date("2026-05-01T00:00:00.000Z"),
+          reminderDate: new Date("2026-06-01T00:00:00.000Z"),
+        },
       );
       const ownerSecond = createReminderSeed(
         owner.id,
-        "Owner later",
-        new Date("2026-05-02T00:00:00.000Z"),
+        {
+          title: "Owner later",
+          nextAlertDate: new Date("2026-05-02T00:00:00.000Z"),
+          reminderDate: new Date("2026-06-01T00:00:00.000Z"),
+        },
       );
       const foreignReminder = createReminderSeed(
         otherUser.id,
-        "Foreign",
-        new Date("2026-05-01T00:00:00.000Z"),
+        {
+          title: "Foreign",
+          nextAlertDate: new Date("2026-05-01T00:00:00.000Z"),
+          reminderDate: new Date("2026-06-01T00:00:00.000Z"),
+        },
       );
 
       await tx.insert(reminder).values([

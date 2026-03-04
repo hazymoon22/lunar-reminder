@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { user } from "../db/schemas/auth.ts";
-import {
-  createUserSeed,
-  withRollbackTx,
-} from "../lib/integration-test-utils.ts";
+import { createUserSeed, withRollbackTx } from "../lib/testing.ts";
 import { userLoader } from "./user.ts";
 
 describe("userLoader integration", () => {

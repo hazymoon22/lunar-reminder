@@ -2,37 +2,12 @@ import { describe, expect, it } from "vitest";
 import { alert, reminder } from "../db/schemas/app.ts";
 import { user } from "../db/schemas/auth.ts";
 import {
+  createAlertSeed,
+  createReminderSeed,
   createUserSeed,
   withRollbackTx,
-} from "../lib/integration-test-utils.ts";
+} from "../lib/testing.ts";
 import { alertLoader } from "./alert.ts";
-
-function createReminderSeed(userId: string) {
-  return {
-    id: crypto.randomUUID(),
-    title: "Alert parent reminder",
-    reminderDate: new Date("2026-06-01T00:00:00.000Z"),
-    nextAlertDate: new Date("2026-05-31T00:00:00.000Z"),
-    userId,
-    repeat: null,
-    alertBefore: 1,
-    mailSubject: "subject",
-    mailBody: "<p>body</p>",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-}
-
-function createAlertSeed(reminderId: string, acknowledged: boolean) {
-  return {
-    id: crypto.randomUUID(),
-    reminderId,
-    alertDate: new Date("2026-05-31T00:00:00.000Z"),
-    acknowledged,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-}
 
 describe("alertLoader integration", () => {
   it("loadCollection returns empty entries when filter has no reminderId", async () => {
