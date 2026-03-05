@@ -24,7 +24,7 @@ jobs:
             | tr '[:upper:]' '[:lower:]' \
             | sed -E 's/[^a-z0-9-]+/-/g; s/^-+//; s/-+$//; s/-+/-/g' \
             | cut -c1-40)"
-          echo "name=pr-${{ github.event.pull_request.number }}-${slug}" >> "$GITHUB_OUTPUT"
+          echo "name=pr-app-${{ github.event.pull_request.number }}-${slug}" >> "$GITHUB_OUTPUT"
 
   unit-test:
     if: github.event.action != 'closed'
