@@ -9,6 +9,10 @@ concurrency:
   group: pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write # Required for OIDC authentication
+  contents: read
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -56,23 +60,31 @@ jobs:
       - name: Install dependencies
         run: deno install
 
+      - name: Fetch secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.15
+        with:
+          method: "oidc"
+          identity-id: "336ff1b2-cf61-4de3-b249-52da696d39b0"
+          project-slug: "lunar-reminder-q-gd-a"
+          env-slug: "dev"
+
       - name: Ensure Neon PR branch exists
         id: neon_create
         uses: neondatabase/create-branch-action@v6
         with:
-          project_id: ${{ vars.NEON_PROJECT_ID }}
+          project_id: ${{ env.NEON_PROJECT_ID }}
           branch_name: ${{ needs.prepare.outputs.neon_branch_name }}
           parent_branch: production
-          api_key: ${{ secrets.NEON_API_KEY }}
+          api_key: ${{ env.NEON_API_KEY }}
 
       - name: Reset Neon PR branch from parent
         id: neon_reset
         uses: neondatabase/reset-branch-action@v1
         with:
-          project_id: ${{ vars.NEON_PROJECT_ID }}
+          project_id: ${{ env.NEON_PROJECT_ID }}
           branch: ${{ needs.prepare.outputs.neon_branch_name }}
           parent: true
-          api_key: ${{ secrets.NEON_API_KEY }}
+          api_key: ${{ env.NEON_API_KEY }}
 
       - name: Run migrations
         env:
@@ -84,9 +96,6 @@ jobs:
       - name: Run integration tests
         env:
           DATABASE_URL: ${{ steps.neon_reset.outputs.db_url }}
-          GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
         run: |
           # define this task in deno.json
           deno task test:integration
@@ -97,9 +106,17 @@ jobs:
     needs: prepare
 
     steps:
+      - name: Fetch secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.9
+        with:
+          method: "oidc"
+          identity-id: "68099215-d70a-4068-8511-eb68f1909546"
+          project-slug: "lunar-reminder-ux-hn"
+          env-slug: "dev"
+
       - name: Delete Neon PR branch
         uses: neondatabase/delete-branch-action@v3
         with:
-          project_id: ${{ vars.NEON_PROJECT_ID }}
+          project_id: ${{ env.NEON_PROJECT_ID }}
           branch: ${{ needs.prepare.outputs.neon_branch_name }}
-          api_key: ${{ secrets.NEON_API_KEY }}
+          api_key: ${{ env.NEON_API_KEY }}

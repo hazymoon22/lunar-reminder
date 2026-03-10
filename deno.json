@@ -2,15 +2,20 @@
   "tasks": {
     "dev": "deno run -A npm:astro dev",
     "build": "deno run -A npm:astro build",
-    "preview": "deno run --allow-net --allow-read --allow-env --env ./dist/server/entry.mjs",
-    "astro": "deno run -A npm:astro",
+    "preview": "deno run --allow-net --allow-read ./dist/server/entry.mjs",
     "test": "deno run -A npm:vitest run --exclude 'src/**/*.integration.test.ts'",
     "test:integration": "deno run -A npm:vitest run integration.test.ts",
-    "test:watch": "deno run -A npm:vitest --exclude 'src/**/*.integration.test.ts'",
     "git-hooks": "lefthook install"
   },
   "compilerOptions": {
     "types": ["./.astro/env.d.ts"]
   },
-  "exclude": ["dist/", ".astro/"]
+  "exclude": [
+    "dist/",
+    ".astro/"
+  ],
+  "deploy": {
+    "org": "haziemoon",
+    "app": "lunar-reminder"
+  }
 }

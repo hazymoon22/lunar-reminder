@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: main-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write # Required for OIDC authentication
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: lts
+
+      - name: Install dependencies
+        run: deno install
+
+      - name: Fetch secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.15
+        with:
+          method: "oidc"
+          identity-id: "336ff1b2-cf61-4de3-b249-52da696d39b0"
+          project-slug: "lunar-reminder-q-gd-a"
+          env-slug: "prod"
+
+      - name: Set secrets in Deno Deploy
+        run: |
+          deno deploy env update-value APP_URL ${{ env.APP_URL }}
+          deno deploy env update-value BETTER_AUTH_SECRET ${{ env.BETTER_AUTH_SECRET }}
+          deno deploy env update-value DATABASE_URL ${{ env.DATABASE_URL }}
+          deno deploy env update-value GOOGLE_CLIENT_ID ${{ env.GOOGLE_CLIENT_ID }}
+          deno deploy env update-value GOOGLE_CLIENT_SECRET ${{ env.GOOGLE_CLIENT_SECRET }}
+
+      - name: Deploy
+        run: deno deploy --prod
