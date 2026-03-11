@@ -110,8 +110,8 @@ jobs:
         uses: Infisical/secrets-action@v1.0.9
         with:
           method: "oidc"
-          identity-id: "68099215-d70a-4068-8511-eb68f1909546"
-          project-slug: "lunar-reminder-ux-hn"
+          identity-id: "336ff1b2-cf61-4de3-b249-52da696d39b0"
+          project-slug: "lunar-reminder-q-gd-a"
           env-slug: "dev"
 
       - name: Delete Neon PR branch
