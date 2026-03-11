@@ -7,7 +7,61 @@ import Layout from '../layouts/Layout.astro'
   title="Lunar Reminder | Lunar Calendar Event Alerts"
   description="Sign in with Google to manage lunar-calendar reminders and get timely alert emails for important dates."
 >
-  <div class="min-h-screen flex items-center justify-center bg-base-200 p-4">
-    <GoogleSignInCard />
+  <div class="min-h-screen relative overflow-hidden bg-base-200">
+    <div
+      class="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute -bottom-24 right-10 h-80 w-80 rounded-full bg-secondary/20 blur-3xl"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute left-10 top-24 h-40 w-40 rounded-full bg-accent/20 blur-2xl"
+    >
+    </div>
+
+    <div
+      class="relative mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-4 py-14 xl:max-w-7xl 2xl:max-w-[78rem]"
+    >
+      <div
+        class="grid w-full items-center gap-10 lg:items-center lg:grid-cols-[1.1fr_0.9fr] xl:gap-16"
+      >
+        <div class="space-y-6">
+          <div
+            class="inline-flex items-center gap-2 rounded-full border border-base-300 bg-base-100/70 px-3 py-1 text-xs font-semibold tracking-wide text-base-content/70 backdrop-blur"
+          >
+            <span class="h-1.5 w-1.5 rounded-full bg-primary"></span>
+            Lunar calendar alerts, delivered
+          </div>
+          <h1
+            class="headline-display text-[2.35rem] font-semibold leading-[1.08] text-base-content sm:text-[2.9rem] sm:leading-[1.08] xl:text-[3.2rem] xl:leading-[1.06]"
+          >
+            Never miss a lunar moment.
+            <span class="block text-primary"
+              >Get gentle reminders for the dates that matter.</span
+            >
+          </h1>
+          <p class="max-w-xl text-[0.95rem] leading-relaxed text-base-content/70 sm:text-[1.02rem] xl:text-[1.1rem]">
+            Connect your Google account to track lunar calendar events and
+            receive timely email reminders for family milestones, traditions,
+            and festivals.
+          </p>
+        </div>
+
+        <div class="flex items-center justify-center">
+          <div
+            class="w-full max-w-lg rounded-3xl border border-base-300 bg-base-100/80 p-6 shadow-xl backdrop-blur xl:max-w-xl xl:p-8"
+          >
+            <div
+              class="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-base-content/50"
+            >
+              Sign in to continue
+            </div>
+            <GoogleSignInCard />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </Layout>

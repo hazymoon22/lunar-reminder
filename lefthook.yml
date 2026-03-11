@@ -5,7 +5,7 @@ pre-commit:
   parallel: true
   commands:
     fmt:
-      glob: "*.{ts,tsx,js,mjs,yml}"
+      glob: "*.{ts,tsx,js,mjs,yml,css}"
       run: |
         deno fmt {staged_files}
         git diff --quiet -- {staged_files} || (

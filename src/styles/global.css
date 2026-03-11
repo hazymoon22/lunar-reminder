@@ -1,5 +1,26 @@
+@import url("https://cdn.jsdelivr.net/npm/@fontsource/monaspace-argon@5.0.10/index.css");
 @import "tailwindcss";
+
 @source "../../node_modules/flowbite-svelte";
 @plugin "daisyui" {
   themes: sunset;
+}
+
+@layer base {
+  :root {
+    --font-mono:
+      "Monaspace Argon", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+  }
+
+  body {
+    font-family: var(--font-mono);
+  }
 }
