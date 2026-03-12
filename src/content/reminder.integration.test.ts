@@ -12,7 +12,12 @@ describe("reminderLoader integration", () => {
   it("loadCollection returns empty entries when filter has no userId", async () => {
     await withRollbackTx(async (tx) => {
       const loader = reminderLoader(tx);
-      const result = await loader.loadCollection({ filter: {} });
+      const result = await loader.loadCollection(
+        {
+          collection: "reminders",
+          filter: {},
+        } as Parameters<typeof loader.loadCollection>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
@@ -61,9 +66,12 @@ describe("reminderLoader integration", () => {
       ]);
 
       const loader = reminderLoader(tx);
-      const result = await loader.loadCollection({
-        filter: { userId: owner.id },
-      });
+      const result = await loader.loadCollection(
+        {
+          collection: "reminders",
+          filter: { userId: owner.id },
+        } as Parameters<typeof loader.loadCollection>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
@@ -79,9 +87,12 @@ describe("reminderLoader integration", () => {
   it("loadEntry returns error for non-existent file id", async () => {
     await withRollbackTx(async (tx) => {
       const loader = reminderLoader(tx);
-      const result = await loader.loadEntry({
-        filter: { id: `missing-${crypto.randomUUID()}` },
-      });
+      const result = await loader.loadEntry(
+        {
+          collection: "reminders",
+          filter: { id: `missing-${crypto.randomUUID()}` },
+        } as Parameters<typeof loader.loadEntry>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadEntry result");

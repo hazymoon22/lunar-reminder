@@ -10,7 +10,11 @@ describe("userLoader integration", () => {
       await tx.insert(user).values(seededUser);
 
       const loader = userLoader(tx);
-      const result = await loader.loadCollection({} as never);
+      const result = await loader.loadCollection(
+        {
+          collection: "users",
+        } as Parameters<typeof loader.loadCollection>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
@@ -29,7 +33,12 @@ describe("userLoader integration", () => {
       await tx.insert(user).values(seededUser);
 
       const loader = userLoader(tx);
-      const result = await loader.loadEntry({ filter: { id: seededUser.id } });
+      const result = await loader.loadEntry(
+        {
+          collection: "users",
+          filter: { id: seededUser.id },
+        } as Parameters<typeof loader.loadEntry>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadEntry result");
@@ -47,9 +56,12 @@ describe("userLoader integration", () => {
       await tx.insert(user).values(seededUser);
 
       const loader = userLoader(tx);
-      const result = await loader.loadEntry({
-        filter: { email: seededUser.email },
-      });
+      const result = await loader.loadEntry(
+        {
+          collection: "users",
+          filter: { email: seededUser.email },
+        } as Parameters<typeof loader.loadEntry>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadEntry result");

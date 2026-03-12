@@ -13,7 +13,12 @@ describe("alertLoader integration", () => {
   it("loadCollection returns empty entries when filter has no reminderId", async () => {
     await withRollbackTx(async (tx) => {
       const loader = alertLoader(tx);
-      const result = await loader.loadCollection({ filter: {} });
+      const result = await loader.loadCollection(
+        {
+          collection: "alerts",
+          filter: {},
+        } as Parameters<typeof loader.loadCollection>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
@@ -41,9 +46,12 @@ describe("alertLoader integration", () => {
         .values([pendingAlert, acknowledgedAlert, otherReminderAlert]);
 
       const loader = alertLoader(tx);
-      const result = await loader.loadCollection({
-        filter: { reminderId: reminderA.id },
-      });
+      const result = await loader.loadCollection(
+        {
+          collection: "alerts",
+          filter: { reminderId: reminderA.id },
+        } as Parameters<typeof loader.loadCollection>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
@@ -58,9 +66,12 @@ describe("alertLoader integration", () => {
   it("loadEntry returns error for non-existent file id", async () => {
     await withRollbackTx(async (tx) => {
       const loader = alertLoader(tx);
-      const result = await loader.loadEntry({
-        filter: { id: `missing-${crypto.randomUUID()}` },
-      });
+      const result = await loader.loadEntry(
+        {
+          collection: "alerts",
+          filter: { id: `missing-${crypto.randomUUID()}` },
+        } as Parameters<typeof loader.loadEntry>[0],
+      );
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadEntry result");

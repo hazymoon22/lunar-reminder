@@ -38,7 +38,4 @@ export default defineConfig({
   },
 
   integrations: [svelte()],
-  experimental: {
-    liveContentCollections: true,
-  },
 });
