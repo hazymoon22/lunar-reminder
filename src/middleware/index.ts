@@ -14,20 +14,14 @@ const authenticate = defineMiddleware(async (context, next) => {
 
   // Allow api paths
   // Hono API routes will be protected by Hono middleware.
-  if (isApiPath) return next();
+  if (isHomepage || isApiPath) return next();
 
   // Fetch session for all requests (makes it available in pages)
   const session = await auth.api.getSession({
     headers: context.request.headers,
   });
 
-  if (!session) {
-    if (isHomepage) return next();
-
-    return context.redirect("/");
-  }
-
-  if (isHomepage) return context.redirect("/reminders");
+  if (!session) return context.redirect("/");
 
   const isAdmin = session.user.role === "admin";
   if (isAdminPath && !isAdmin) return context.redirect("/");

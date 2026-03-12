@@ -17,7 +17,7 @@ pre-commit:
       run: deno lint {staged_files}
     check:
       glob: "*.{ts,tsx,js,mjs}"
-      run: deno check {staged_files}
+      run: deno check
 
 pre-push:
   commands:

@@ -1,6 +1,8 @@
 ---
 import GoogleSignInCard from '../components/GoogleSignInCard.astro'
 import Layout from '../layouts/Layout.astro'
+
+export const prerender = true
 ---
 
 <Layout
@@ -42,7 +44,9 @@ import Layout from '../layouts/Layout.astro'
               >Get gentle reminders for the dates that matter.</span
             >
           </h1>
-          <p class="max-w-xl text-[0.95rem] leading-relaxed text-base-content/70 sm:text-[1.02rem] xl:text-[1.1rem]">
+          <p
+            class="max-w-xl text-[0.95rem] leading-relaxed text-base-content/70 sm:text-[1.02rem] xl:text-[1.1rem]"
+          >
             Connect your Google account to track lunar calendar events and
             receive timely email reminders for family milestones, traditions,
             and festivals.
@@ -65,3 +69,19 @@ import Layout from '../layouts/Layout.astro'
     </div>
   </div>
 </Layout>
+
+<script>
+  import { authClient } from '../lib/auth-client.ts'
+
+  const session = await authClient.getSession()
+  if (session?.data) {
+    const btnGoogleAuth = document.getElementById(
+      'btn-google-auth'
+    ) as HTMLButtonElement
+    btnGoogleAuth.innerHTML = `
+      <span class="loading loading-spinner loading-lg"></span>
+      Signing in...
+    `
+    window.location.href = '/reminders'
+  }
+</script>

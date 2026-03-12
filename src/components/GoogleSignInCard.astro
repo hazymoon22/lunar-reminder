@@ -38,5 +38,9 @@ import MoonIcon from '../assets/icons/moon.svg'
       callbackURL: '/reminders',
       errorCallbackURL: APP_URL
     })
+    btnGoogleAuth.innerHTML = `
+      <span class="loading loading-spinner loading-lg"></span>
+      Signing in...
+    `
   })
 </script>
