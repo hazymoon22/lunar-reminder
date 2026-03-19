@@ -84,36 +84,21 @@ vp run dev
 
 All commands are run from the root of the project:
 
-| Command                | Action                               |
-| ---------------------- | ------------------------------------ |
-| `deno install`         | Install dependencies                 |
-| `deno task dev`        | Start dev server at `localhost:4321` |
-| `deno task build`      | Build production site to `./dist/`   |
-| `deno task preview`    | Preview production build locally     |
-| `deno task astro`      | Run Astro CLI commands               |
-| `deno task test`       | Run unit tests with Vitest           |
-| `deno task test:watch` | Run Vitest in watch mode             |
-| `deno task git-hooks`  | Install Lefthook git hooks           |
+| Command          | Action                               |
+| ---------------- | ------------------------------------ |
+| `pnpm install`   | Install dependencies                 |
+| `pnpm run dev`   | Start dev server at `localhost:4321` |
+| `pnpm run build` | Build production site to `./dist/`   |
+| `vp check`       | Lint, format and typecheck           |
+| `vp test`        | Run unit tests with Vitest           |
 
-## ✅ Git Hooks (Lefthook)
+## ✅ Git Hooks
 
-This project uses [Lefthook](https://github.com/evilmartians/lefthook) for
-shared git hooks.
+This project uses Vite+ staged hooks for pre-commit checks.
 
-- `pre-commit` (fast): runs staged-only checks for JS/TS files:
-  - `deno fmt`
-  - `deno lint`
-  - `deno check`
-- `pre-push` (full): runs full-repo checks:
-  - `deno fmt`
-  - `deno lint`
-  - `deno check src/**/*.ts`
-
-One-time setup after cloning:
-
-```bash
-deno task git-hooks
-```
+- `pre-commit`: runs staged-only checks:
+  - `prettier --write` for `.astro` files
+  - `vp check --fix` for all files
 
 ## 🎨 Theming
 
@@ -133,7 +118,7 @@ synthwave, retro, cyberpunk, and more.
 
 ### Astro Config
 
-- **Output mode**: `hybrid` (static by default, SSR for specific pages)
+- **Output mode**: `server` (SSR with Cloudflare adapter)
 - **Adapter**: `@astrojs/cloudflare` for Cloudflare deployment
 - **Styling**: Tailwind CSS v4 via Vite plugin
 
