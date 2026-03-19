@@ -1,12 +1,12 @@
 ---
-import { getLiveCollection } from 'astro:content'
-import DrawerLayout from '../layouts/DrawerLayout.astro'
-import PlusIcon from '../assets/icons/plus.svg'
-import UserList from '../components/UserList.astro'
-import UserModal from '../components/UserModal.svelte'
+import { getLiveCollection } from "astro:content";
+import DrawerLayout from "../layouts/DrawerLayout.astro";
+import PlusIcon from "../assets/icons/plus.svg";
+import UserList from "../components/UserList.astro";
+import UserModal from "../components/UserModal.svelte";
 
-const { entries } = await getLiveCollection('users')
-const users = entries?.map((entry) => entry.data) ?? []
+const { entries } = await getLiveCollection("users");
+const users = entries?.map((entry) => entry.data) ?? [];
 ---
 
 <DrawerLayout
@@ -23,12 +23,12 @@ const users = entries?.map((entry) => entry.data) ?? []
   <UserModal client:load />
 
   <script>
-    const btnAddUser = document.getElementById('btn-add-user')
-    if (!btnAddUser) throw new Error('Cannot find button and modal')
+    const btnAddUser = document.getElementById("btn-add-user");
+    if (!btnAddUser) throw new Error("Cannot find button and modal");
 
-    btnAddUser.addEventListener('click', () => {
-      const event = new CustomEvent('modal-user:open')
-      document.dispatchEvent(event)
-    })
+    btnAddUser.addEventListener("click", () => {
+      const event = new CustomEvent("modal-user:open");
+      document.dispatchEvent(event);
+    });
   </script>
 </DrawerLayout>

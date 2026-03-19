@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  REPEAT_FREQUENCIES,
-  ZInsertReminder,
-  ZSelectReminder,
-} from "../db/schemas/app.ts";
+import { REPEAT_FREQUENCIES, ZInsertReminder, ZSelectReminder } from "../db/schemas/app.ts";
 
 export const ZRepeatOption = z.enum(REPEAT_FREQUENCIES);
 

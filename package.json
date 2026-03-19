@@ -1,15 +1,24 @@
 {
   "name": "lunar-reminder",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
-  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "tsc && vp build",
+    "preview": "vp preview"
+  },
   "dependencies": {
-    "@astrojs/svelte": "^8.0.0",
-    "@deno/astro-adapter": "^0.3.2",
+    "@astrojs/cloudflare": "^13.1.2",
+    "@astrojs/svelte": "^8.0.1",
     "@hono/zod-validator": "^0.7.6",
     "@neondatabase/serverless": "^1.0.2",
+    "@tailwindcss/vite": "^4.0.0",
     "@types/sanitize-html": "^2.16.0",
     "astro": "^6.0.3",
     "better-auth": "^1.4.18",
+    "cloudflare": "^5.2.0",
+    "daisyui": "^5.5.14",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
@@ -21,10 +30,21 @@
     "sanitize-html": "^2.17.0",
     "svelte": "^5.49.1",
     "tailwindcss": "^4.1.18",
-    "daisyui": "^5.5.14",
-    "@tailwindcss/vite": "^4.0.0",
     "typescript": "^5.9.3",
-    "zod": "^4.3.6",
-    "vitest": "^3.2.4"
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "~5.9.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vite-plus": "latest"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "pnpm": {
+    "overrides": {
+      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+    }
   }
 }

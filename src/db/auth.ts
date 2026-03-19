@@ -1,15 +1,12 @@
 import { eq } from "drizzle-orm";
-import { db, type DbClient } from "./index.ts";
+import { db, type DatabaseClient } from "./index.ts";
 import { type SelectUser, user } from "./schemas/auth.ts";
 
-export function getUsers(database: DbClient = db): Promise<SelectUser[]> {
+export function getUsers(database: DatabaseClient = db): Promise<SelectUser[]> {
   return database.select().from(user).orderBy(user.createdAt);
 }
 
-export async function getUserById(
-  id: string,
-  database: DbClient = db,
-): Promise<SelectUser> {
+export async function getUserById(id: string, database: DatabaseClient = db): Promise<SelectUser> {
   const result = await database
     .select()
     .from(user)
@@ -22,7 +19,7 @@ export async function getUserById(
 
 export async function getUserByEmail(
   email: string,
-  database: DbClient = db,
+  database: DatabaseClient = db,
 ): Promise<SelectUser> {
   const result = await database
     .select()

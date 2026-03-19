@@ -1,31 +1,31 @@
 ---
-import type { SvgComponent } from 'astro/types'
-import AdminIcon from '../assets/icons/admin.svg'
-import LogoutIcon from '../assets/icons/logout.svg'
-import MoonIcon from '../assets/icons/moon.svg'
-import ReminderIcon from '../assets/icons/reminder.svg'
+import type { SvgComponent } from "astro/types";
+import AdminIcon from "../assets/icons/admin.svg";
+import LogoutIcon from "../assets/icons/logout.svg";
+import MoonIcon from "../assets/icons/moon.svg";
+import ReminderIcon from "../assets/icons/reminder.svg";
 
 type NavItem = {
-  name: string
-  href: string
-  icon: SvgComponent
-}
+  name: string;
+  href: string;
+  icon: SvgComponent;
+};
 
-const isAdmin = Astro.locals.user?.role === 'admin' || false
+const isAdmin = Astro.locals.user?.role === "admin" || false;
 const navItems: NavItem[] = [
-  { name: 'Reminders', href: '/reminders', icon: ReminderIcon }
-]
+  { name: "Reminders", href: "/reminders", icon: ReminderIcon },
+];
 if (isAdmin) {
-  navItems.push({ name: 'Admin', href: '/admin', icon: AdminIcon })
+  navItems.push({ name: "Admin", href: "/admin", icon: AdminIcon });
 }
 
 function isActive(href: string) {
-  const currentPath = Astro.url.pathname
-  if (href === '/') {
-    return currentPath === '/'
+  const currentPath = Astro.url.pathname;
+  if (href === "/") {
+    return currentPath === "/";
   }
 
-  return currentPath.startsWith(href)
+  return currentPath.startsWith(href);
 }
 ---
 
@@ -43,7 +43,7 @@ function isActive(href: string) {
         <li class="lg:flex justify-center align-middle flex-col mb-2">
           <a
             href={item.href}
-            class:list={[{ 'text-neutral bg-primary': isActive(item.href) }]}
+            class:list={[{ "text-neutral bg-primary": isActive(item.href) }]}
           >
             <span class="icon">
               <item.icon width="32" height="32" />
@@ -62,14 +62,14 @@ function isActive(href: string) {
 </aside>
 
 <script>
-  import { signOut } from '../lib/auth-client'
+  import { signOut } from "../lib/auth-client";
 
   const btnSignOut = document.getElementById(
-    'btn-sign-out'
-  ) as HTMLButtonElement
-  btnSignOut?.addEventListener('click', async () => {
-    btnSignOut.disabled = true
-    await signOut()
-    btnSignOut.disabled = false
-  })
+    "btn-sign-out",
+  ) as HTMLButtonElement;
+  btnSignOut?.addEventListener("click", async () => {
+    btnSignOut.disabled = true;
+    await signOut();
+    btnSignOut.disabled = false;
+  });
 </script>

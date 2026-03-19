@@ -1,12 +1,12 @@
 ---
-import type { SelectUser } from '../db/schemas/auth.ts'
-import User from './User.astro'
+import type { SelectUser } from "../db/schemas/auth.ts";
+import User from "./User.astro";
 
 interface Props {
-  users: SelectUser[]
+  users: SelectUser[];
 }
 
-const { users } = Astro.props
+const { users } = Astro.props;
 ---
 
 <ul

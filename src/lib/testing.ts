@@ -1,5 +1,6 @@
 import { TransactionRollbackError } from "drizzle-orm";
-import { db, type DbClient } from "../db/index.ts";
+import type { DatabaseClient } from "../db/index.ts";
+import { createTestDbSession } from "../db/test.ts";
 
 export function createUserSeed() {
   const id = crypto.randomUUID();
@@ -18,18 +19,19 @@ export function createUserSeed() {
   };
 }
 
-export async function withRollbackTx<T>(
-  run: (tx: DbClient) => Promise<T>,
-): Promise<T> {
+export async function withRollbackTx<T>(run: (tx: DatabaseClient) => Promise<T>): Promise<T> {
+  const { db, cleanup } = await createTestDbSession();
   let result!: T;
 
   try {
     await db.transaction(async (tx) => {
-      result = await run(tx as unknown as DbClient);
+      result = await run(tx);
       tx.rollback();
     });
   } catch (error) {
     if (!(error instanceof TransactionRollbackError)) throw error;
+  } finally {
+    await cleanup();
   }
 
   return result;
@@ -59,8 +61,7 @@ export function createReminderSeed(
     id: crypto.randomUUID(),
     title: options?.title ?? "Seeded reminder",
     reminderDate: options?.reminderDate ?? new Date("2026-07-15T00:00:00.000Z"),
-    nextAlertDate: options?.nextAlertDate ??
-      new Date("2026-07-14T00:00:00.000Z"),
+    nextAlertDate: options?.nextAlertDate ?? new Date("2026-07-14T00:00:00.000Z"),
     userId,
     repeat: null,
     alertBefore: 1,
@@ -71,10 +72,7 @@ export function createReminderSeed(
   };
 }
 
-export function createAlertSeed(
-  reminderId: string,
-  acknowledged = false,
-) {
+export function createAlertSeed(reminderId: string, acknowledged = false) {
   return {
     id: crypto.randomUUID(),
     reminderId,

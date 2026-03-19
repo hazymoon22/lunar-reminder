@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { sanitizeMailBody } from "./mail.ts";
 
 describe("sanitizeMailBody", () => {
@@ -22,8 +22,7 @@ describe("sanitizeMailBody", () => {
   });
 
   it("keeps only class attribute on anchor tag", () => {
-    const input =
-      '<a href="https://example.com" class="btn" target="_blank">Link</a>';
+    const input = '<a href="https://example.com" class="btn" target="_blank">Link</a>';
     const output = sanitizeMailBody(input);
 
     expect(output).toContain('<a class="btn">Link</a>');

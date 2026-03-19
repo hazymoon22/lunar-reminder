@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Lunar } from "lunar-typescript";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { solarToDate } from "../lib/lunar.ts";
 import { getNextAlertDate } from "./reminder.ts";
 
@@ -12,9 +12,7 @@ type ReminderInput = {
   mailBody: string;
 };
 
-function makeReminder(
-  overrides: Partial<ReminderInput> = {},
-): ReminderInput {
+function makeReminder(overrides: Partial<ReminderInput> = {}): ReminderInput {
   return {
     title: "Test Reminder",
     reminderDate: new Date(Date.UTC(2026, 1, 27)),
@@ -64,9 +62,7 @@ describe("getNextAlertDate", () => {
     const result = getNextAlertDate(reminder as never);
 
     expect(result).toBeDefined();
-    expect(result?.getTime()).toBe(
-      solarToDate(reminderLunar.getSolar()).getTime(),
-    );
+    expect(result?.getTime()).toBe(solarToDate(reminderLunar.getSolar()).getTime());
   });
 
   it("returns undefined for past non-repeating reminder", () => {
@@ -99,9 +95,7 @@ describe("getNextAlertDate", () => {
     const result = getNextAlertDate(reminder as never);
 
     expect(result).toBeDefined();
-    expect((result as Date).getTime()).toBeGreaterThan(
-      new Date(Date.UTC(2026, 1, 27)).getTime(),
-    );
+    expect((result as Date).getTime()).toBeGreaterThan(new Date(Date.UTC(2026, 1, 27)).getTime());
   });
 
   it("returns a future date for past monthly reminder", () => {
@@ -112,8 +106,6 @@ describe("getNextAlertDate", () => {
     const result = getNextAlertDate(reminder as never);
 
     expect(result).toBeDefined();
-    expect((result as Date).getTime()).toBeGreaterThan(
-      new Date(Date.UTC(2026, 1, 27)).getTime(),
-    );
+    expect((result as Date).getTime()).toBeGreaterThan(new Date(Date.UTC(2026, 1, 27)).getTime());
   });
 });

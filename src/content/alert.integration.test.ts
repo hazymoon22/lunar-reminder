@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { alert, reminder } from "../db/schemas/app.ts";
 import { user } from "../db/schemas/auth.ts";
 import {
@@ -13,12 +13,10 @@ describe("alertLoader integration", () => {
   it("loadCollection returns empty entries when filter has no reminderId", async () => {
     await withRollbackTx(async (tx) => {
       const loader = alertLoader(tx);
-      const result = await loader.loadCollection(
-        {
-          collection: "alerts",
-          filter: {},
-        } as Parameters<typeof loader.loadCollection>[0],
-      );
+      const result = await loader.loadCollection({
+        collection: "alerts",
+        filter: {},
+      } as Parameters<typeof loader.loadCollection>[0]);
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
@@ -41,17 +39,13 @@ describe("alertLoader integration", () => {
       const pendingAlert = createAlertSeed(reminderA.id, false);
       const acknowledgedAlert = createAlertSeed(reminderA.id, true);
       const otherReminderAlert = createAlertSeed(reminderB.id, false);
-      await tx
-        .insert(alert)
-        .values([pendingAlert, acknowledgedAlert, otherReminderAlert]);
+      await tx.insert(alert).values([pendingAlert, acknowledgedAlert, otherReminderAlert]);
 
       const loader = alertLoader(tx);
-      const result = await loader.loadCollection(
-        {
-          collection: "alerts",
-          filter: { reminderId: reminderA.id },
-        } as Parameters<typeof loader.loadCollection>[0],
-      );
+      const result = await loader.loadCollection({
+        collection: "alerts",
+        filter: { reminderId: reminderA.id },
+      } as Parameters<typeof loader.loadCollection>[0]);
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
@@ -66,12 +60,10 @@ describe("alertLoader integration", () => {
   it("loadEntry returns error for non-existent file id", async () => {
     await withRollbackTx(async (tx) => {
       const loader = alertLoader(tx);
-      const result = await loader.loadEntry(
-        {
-          collection: "alerts",
-          filter: { id: `missing-${crypto.randomUUID()}` },
-        } as Parameters<typeof loader.loadEntry>[0],
-      );
+      const result = await loader.loadEntry({
+        collection: "alerts",
+        filter: { id: `missing-${crypto.randomUUID()}` },
+      } as Parameters<typeof loader.loadEntry>[0]);
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadEntry result");

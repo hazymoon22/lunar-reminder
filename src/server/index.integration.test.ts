@@ -1,8 +1,7 @@
 import { eq, inArray } from "drizzle-orm";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import app from "./index.ts";
-import { alert, reminder } from "../db/schemas/app.ts";
+import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { db } from "../db/index.ts";
+import { alert, reminder } from "../db/schemas/app.ts";
 import { user } from "../db/schemas/auth.ts";
 import { auth } from "../lib/auth.ts";
 import {
@@ -11,6 +10,7 @@ import {
   createUserSeed,
   mockSession,
 } from "../lib/testing.ts";
+import app from "./index.ts";
 
 const seededUserIds: string[] = [];
 
@@ -42,9 +42,7 @@ describe("server API integration", () => {
     seededUserIds.push(seededUser.id);
     await db.insert(user).values(seededUser);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(seededUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(seededUser.id));
 
     const payload = {
       title: "Integration reminder",
@@ -66,11 +64,7 @@ describe("server API integration", () => {
     expect(response.status).toBe(200);
     expect(body.id).toBeTruthy();
 
-    const [stored] = await db
-      .select()
-      .from(reminder)
-      .where(eq(reminder.id, body.id))
-      .limit(1);
+    const [stored] = await db.select().from(reminder).where(eq(reminder.id, body.id)).limit(1);
 
     expect(stored?.id).toBe(body.id);
     expect(stored?.userId).toBe(seededUser.id);
@@ -82,9 +76,7 @@ describe("server API integration", () => {
     seededUserIds.push(seededUser.id);
     await db.insert(user).values(seededUser);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(seededUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(seededUser.id));
 
     const response = await app.fetch(
       new Request("http://localhost/api/reminders", {
@@ -110,9 +102,7 @@ describe("server API integration", () => {
     const seededReminder = createReminderSeed(seededUser.id);
     await db.insert(reminder).values(seededReminder);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(seededUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(seededUser.id));
 
     const response = await app.fetch(
       new Request(`http://localhost/api/reminders/${seededReminder.id}`, {
@@ -141,9 +131,7 @@ describe("server API integration", () => {
     const seededReminder = createReminderSeed(owner.id);
     await db.insert(reminder).values(seededReminder);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(otherUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(otherUser.id));
 
     const response = await app.fetch(
       new Request(`http://localhost/api/reminders/${seededReminder.id}`, {
@@ -164,9 +152,7 @@ describe("server API integration", () => {
     const seededReminder = createReminderSeed(seededUser.id);
     await db.insert(reminder).values(seededReminder);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(seededUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(seededUser.id));
 
     const response = await app.fetch(
       new Request(`http://localhost/api/reminders/${seededReminder.id}`, {
@@ -193,9 +179,7 @@ describe("server API integration", () => {
     const seededReminder = createReminderSeed(owner.id);
     await db.insert(reminder).values(seededReminder);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(otherUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(otherUser.id));
 
     const response = await app.fetch(
       new Request(`http://localhost/api/reminders/${seededReminder.id}`, {
@@ -216,9 +200,7 @@ describe("server API integration", () => {
     const seededAlert = createAlertSeed(seededReminder.id);
     await db.insert(alert).values(seededAlert);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(seededUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(seededUser.id));
 
     const response = await app.fetch(
       new Request(`http://localhost/api/alerts/${seededAlert.id}`, {
@@ -230,11 +212,7 @@ describe("server API integration", () => {
 
     expect(response.status).toBe(200);
 
-    const [stored] = await db
-      .select()
-      .from(alert)
-      .where(eq(alert.id, seededAlert.id))
-      .limit(1);
+    const [stored] = await db.select().from(alert).where(eq(alert.id, seededAlert.id)).limit(1);
     expect(stored?.acknowledged).toBe(true);
   });
 
@@ -274,9 +252,7 @@ describe("server API integration", () => {
     const seededAlert = createAlertSeed(seededReminder.id);
     await db.insert(alert).values(seededAlert);
 
-    vi.spyOn(auth.api, "getSession").mockResolvedValue(
-      mockSession(seededUser.id),
-    );
+    vi.spyOn(auth.api, "getSession").mockResolvedValue(mockSession(seededUser.id));
 
     const response = await app.fetch(
       new Request(`http://localhost/api/alerts/${seededAlert.id}`, {

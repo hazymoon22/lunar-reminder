@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { user } from "../db/schemas/auth.ts";
 import { createUserSeed, withRollbackTx } from "../lib/testing.ts";
 import { userLoader } from "./user.ts";
@@ -10,19 +10,15 @@ describe("userLoader integration", () => {
       await tx.insert(user).values(seededUser);
 
       const loader = userLoader(tx);
-      const result = await loader.loadCollection(
-        {
-          collection: "users",
-        } as Parameters<typeof loader.loadCollection>[0],
-      );
+      const result = await loader.loadCollection({
+        collection: "users",
+      } as Parameters<typeof loader.loadCollection>[0]);
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadCollection result");
       expect("entries" in result).toBe(true);
       if ("entries" in result) {
-        expect(result.entries.some((entry) => entry.id === seededUser.id)).toBe(
-          true,
-        );
+        expect(result.entries.some((entry) => entry.id === seededUser.id)).toBe(true);
       }
     });
   });
@@ -33,12 +29,10 @@ describe("userLoader integration", () => {
       await tx.insert(user).values(seededUser);
 
       const loader = userLoader(tx);
-      const result = await loader.loadEntry(
-        {
-          collection: "users",
-          filter: { id: seededUser.id },
-        } as Parameters<typeof loader.loadEntry>[0],
-      );
+      const result = await loader.loadEntry({
+        collection: "users",
+        filter: { id: seededUser.id },
+      } as Parameters<typeof loader.loadEntry>[0]);
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadEntry result");
@@ -56,12 +50,10 @@ describe("userLoader integration", () => {
       await tx.insert(user).values(seededUser);
 
       const loader = userLoader(tx);
-      const result = await loader.loadEntry(
-        {
-          collection: "users",
-          filter: { email: seededUser.email },
-        } as Parameters<typeof loader.loadEntry>[0],
-      );
+      const result = await loader.loadEntry({
+        collection: "users",
+        filter: { email: seededUser.email },
+      } as Parameters<typeof loader.loadEntry>[0]);
 
       expect(result).toBeDefined();
       if (!result) throw new Error("Expected loadEntry result");

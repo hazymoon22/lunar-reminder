@@ -1,6 +1,6 @@
 import type { LiveLoader } from "astro/loaders";
 import { getUserByEmail, getUserById, getUsers } from "../db/auth.ts";
-import { db, type DbClient } from "../db/index.ts";
+import { db, type DatabaseClient } from "../db/index.ts";
 import type { SelectUser } from "../db/schemas/auth.ts";
 
 type EntryFilter = {
@@ -8,10 +8,7 @@ type EntryFilter = {
   email?: string;
 };
 
-export function userLoader(database: DbClient = db): LiveLoader<
-  SelectUser,
-  EntryFilter
-> {
+export function userLoader(database: DatabaseClient = db): LiveLoader<SelectUser, EntryFilter> {
   return {
     name: "user-loader",
 
@@ -49,7 +46,7 @@ export function userLoader(database: DbClient = db): LiveLoader<
         }
 
         return { error: new Error("Entry not found") };
-      } catch (_e) {
+      } catch {
         return { error: new Error("Entry not found") };
       }
     },
