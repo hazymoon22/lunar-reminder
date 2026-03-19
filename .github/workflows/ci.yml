@@ -30,51 +30,40 @@ jobs:
             | cut -c1-40)"
           echo "name=pr-app-${{ github.event.pull_request.number }}-${slug}" >> "$GITHUB_OUTPUT"
 
-  unit-test:
+  check:
     if: github.event.action != 'closed'
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v2
+      - uses: voidzero-dev/setup-vp@v1
         with:
-          deno-version: lts
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/deno
-          key: ${{ runner.os }}-lunar-reminder-${{ hashFiles('deno.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-lunar-reminder-
+          node-version: "24"
+          cache: true
 
       - name: Install dependencies
-        run: deno install
+        run: vp install
 
-      - name: Unit tests
-        run: deno task test
+      - name: Generate astro types
+        run: vpx astro sync
 
-  integration-test:
+      - name: Lint, format and typecheck
+        run: vp check
+
+  test:
     if: github.event.action != 'closed'
     runs-on: blacksmith-2vcpu-ubuntu-2404
     needs: [prepare]
     steps:
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v2
+      - uses: voidzero-dev/setup-vp@v1
         with:
-          deno-version: lts
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/deno
-          key: ${{ runner.os }}-lunar-reminder-${{ hashFiles('deno.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-lunar-reminder-
+          node-version: "24"
+          cache: true
 
       - name: Install dependencies
-        run: deno install
+        run: vp install
 
       - name: Fetch secrets from Infisical
         uses: Infisical/secrets-action@v1.0.15
@@ -105,16 +94,12 @@ jobs:
       - name: Run migrations
         env:
           DATABASE_URL: ${{ steps.neon_reset.outputs.db_url }}
-        run: |
-          # use your actual migration command
-          deno run -A npm:drizzle-kit migrate
+        run: vpx drizzle-kit migrate
 
-      - name: Run integration tests
+      - name: Run tests
         env:
           DATABASE_URL: ${{ steps.neon_reset.outputs.db_url }}
-        run: |
-          # define this task in deno.json
-          deno task test:integration
+        run: vp test
 
   cleanup-neon-branch:
     if: github.event.action == 'closed'

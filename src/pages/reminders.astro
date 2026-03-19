@@ -1,55 +1,55 @@
 ---
-import { getLiveCollection } from 'astro:content'
-import DrawerLayout from '../layouts/DrawerLayout.astro'
-import PlusIcon from '../assets/icons/plus.svg'
-import Reminder from '../components/Reminder.astro'
-import ReminderModal from '../components/ReminderModal.svelte'
-import { ZReminderCard } from '../models'
-import { Lunar } from 'lunar-typescript'
-import { lunarToDate } from '../lib/lunar'
+import { getLiveCollection } from "astro:content";
+import DrawerLayout from "../layouts/DrawerLayout.astro";
+import PlusIcon from "../assets/icons/plus.svg";
+import Reminder from "../components/Reminder.astro";
+import ReminderModal from "../components/ReminderModal.svelte";
+import { ZReminderCard } from "../models";
+import { Lunar } from "lunar-typescript";
+import { lunarToDate } from "../lib/lunar";
 
-const { entries } = await getLiveCollection('reminders', {
-  userId: Astro.locals.session?.userId
-})
-const reminders = entries?.map((reminder) => reminder.data) ?? []
+const { entries } = await getLiveCollection("reminders", {
+  userId: Astro.locals.session?.userId,
+});
+const reminders = entries?.map((reminder) => reminder.data) ?? [];
 const reminderCards = reminders.map((reminder) => {
   if (!reminder.nextAlertDate) {
     return ZReminderCard.parse({
       ...reminder,
-      dueIn: 'Expired'
-    })
+      dueIn: "Expired",
+    });
   }
 
-  const nextAlertDateLunar = Lunar.fromDate(reminder.nextAlertDate)
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
+  const nextAlertDateLunar = Lunar.fromDate(reminder.nextAlertDate);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
 
   const dueIn = Math.floor(
-    (reminder.nextAlertDate.getTime() - now.getTime()) / 86400000
-  ) // Days
+    (reminder.nextAlertDate.getTime() - now.getTime()) / 86400000,
+  ); // Days
 
   if (dueIn < 0) {
     return ZReminderCard.parse({
       ...reminder,
       nextAlertDateLunar: lunarToDate(nextAlertDateLunar),
-      dueIn: 'Expired'
-    })
+      dueIn: "Expired",
+    });
   }
 
   if (dueIn === 0) {
     return ZReminderCard.parse({
       ...reminder,
       nextAlertDateLunar: lunarToDate(nextAlertDateLunar),
-      dueIn: 'Today'
-    })
+      dueIn: "Today",
+    });
   }
 
   return ZReminderCard.parse({
     ...reminder,
     nextAlertDateLunar: lunarToDate(nextAlertDateLunar),
-    dueIn: `${dueIn} day(s)`
-  })
-})
+    dueIn: `${dueIn} day(s)`,
+  });
+});
 ---
 
 <DrawerLayout
@@ -66,12 +66,12 @@ const reminderCards = reminders.map((reminder) => {
   <ReminderModal client:load />
 
   <script>
-    const btnAddReminder = document.getElementById('btn-add-reminder')
-    if (!btnAddReminder) throw new Error('Cannot find button and modal')
+    const btnAddReminder = document.getElementById("btn-add-reminder");
+    if (!btnAddReminder) throw new Error("Cannot find button and modal");
 
-    btnAddReminder.addEventListener('click', () => {
-      const event = new CustomEvent('modal-reminder-detail:open')
-      document.dispatchEvent(event)
-    })
+    btnAddReminder.addEventListener("click", () => {
+      const event = new CustomEvent("modal-reminder-detail:open");
+      document.dispatchEvent(event);
+    });
   </script>
 </DrawerLayout>

@@ -1,7 +1,7 @@
 # 🌙 Lunar Reminder
 
 A modern web application for managing reminders based on the lunar calendar.
-Built with Astro, Tailwind CSS, DaisyUI, and Deno.
+Built with Astro, Tailwind CSS, DaisyUI, and Vite+.
 
 ## ✨ Features
 
@@ -16,11 +16,12 @@ Built with Astro, Tailwind CSS, DaisyUI, and Deno.
 ## 🛠️ Tech Stack
 
 - **Framework**: [Astro](https://astro.build) - Modern web framework
-- **Runtime**: [Deno](https://deno.land) - Secure JavaScript/TypeScript runtime
+- **Runtime**: [Cloudflare](https://pages.cloudflare.com/) - Edge
+  JavaScript/TypeScript runtime
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com) - Utility-first CSS
 - **UI Components**: [DaisyUI](https://daisyui.com) - Tailwind CSS component
   library
-- **Rendering**: Hybrid (Static + SSR with Deno adapter)
+- **Rendering**: Hybrid (Static + SSR with Cloudflare adapter)
 
 ## 📁 Project Structure
 
@@ -54,7 +55,7 @@ lunar_reminder/
 
 ### Prerequisites
 
-- [Deno](https://deno.land/) installed on your system
+- [Vite+](https://viteplus.dev/) installed on your system
 
 ### Installation
 
@@ -68,20 +69,13 @@ cd lunar_reminder
 2. Install dependencies:
 
 ```bash
-deno install
+vp i
 ```
 
-3. Install and enable git hooks (one-time per clone): Install
-   [Lefthook](https://github.com/evilmartians/lefthook?tab=readme-ov-file#install)
+3. Start the development server:
 
 ```bash
-deno task git-hooks
-```
-
-4. Start the development server:
-
-```bash
-deno task dev
+vp run dev
 ```
 
 5. Open your browser at `http://localhost:4321`
@@ -140,7 +134,7 @@ synthwave, retro, cyberpunk, and more.
 ### Astro Config
 
 - **Output mode**: `hybrid` (static by default, SSR for specific pages)
-- **Adapter**: `@astrojs/deno` for Deno deployment
+- **Adapter**: `@astrojs/cloudflare` for Cloudflare deployment
 - **Styling**: Tailwind CSS v4 via Vite plugin
 
 ### SSR Pages
@@ -181,4 +175,4 @@ feedback are welcome! Feel free to:
 
 ---
 
-Built with ❤️ using Astro, Tailwind CSS, DaisyUI, Hono and Deno
+Built with ❤️ using Astro, Tailwind CSS, DaisyUI, Hono and Vite+

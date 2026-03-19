@@ -1,6 +1,6 @@
 import { and, eq, exists } from "drizzle-orm";
-import { db, type DbClient } from ".";
 import { NotFoundError } from "../lib/error.ts";
+import { db, type DatabaseClient } from "./index.ts";
 import {
   alert,
   type InsertReminder,
@@ -13,7 +13,7 @@ import {
 
 export async function getReminders(
   userId: string,
-  database: DbClient = db,
+  database: DatabaseClient = db,
 ): Promise<SelectReminder[]> {
   const result = await database
     .select()
@@ -26,12 +26,9 @@ export async function getReminders(
 
 export async function insertReminder(
   data: InsertReminder,
-  database: DbClient = db,
+  database: DatabaseClient = db,
 ): Promise<string> {
-  const [result] = await database
-    .insert(reminder)
-    .values(data)
-    .returning({ id: reminder.id });
+  const [result] = await database.insert(reminder).values(data).returning({ id: reminder.id });
 
   return result.id;
 }
@@ -40,7 +37,7 @@ export async function updateReminder(
   id: string,
   userId: string,
   data: UpdateReminder,
-  database: DbClient = db,
+  database: DatabaseClient = db,
 ): Promise<string> {
   const matchId = eq(reminder.id, id);
   const belongToUser = eq(reminder.userId, userId);
@@ -57,7 +54,7 @@ export async function updateReminder(
 export async function deleteReminder(
   id: string,
   userId: string,
-  database: DbClient = db,
+  database: DatabaseClient = db,
 ): Promise<string> {
   const matchId = eq(reminder.id, id);
   const belongToUser = eq(reminder.userId, userId);
@@ -72,7 +69,7 @@ export async function deleteReminder(
 
 export async function getReminderAlerts(
   reminderId: string,
-  database: DbClient = db,
+  database: DatabaseClient = db,
 ): Promise<SelectAlert[]> {
   const belongToReminder = eq(alert.reminderId, reminderId);
   const isNotAcknowledged = eq(alert.acknowledged, false);
@@ -88,16 +85,13 @@ export async function updateReminderAlert(
   id: string,
   userId: string,
   data: UpdateAlert,
-  database: DbClient = db,
+  database: DatabaseClient = db,
 ): Promise<string> {
   const matchId = eq(alert.id, id);
   const reminderOwnsAlert = eq(reminder.id, alert.reminderId);
   const reminderBelongToUser = eq(reminder.userId, userId);
   const alertBelongToUser = exists(
-    database
-      .select()
-      .from(reminder)
-      .where(and(reminderOwnsAlert, reminderBelongToUser)),
+    database.select().from(reminder).where(and(reminderOwnsAlert, reminderBelongToUser)),
   );
   const [result] = await database
     .update(alert)

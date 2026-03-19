@@ -1,8 +1,8 @@
 ---
-import GoogleSignInCard from '../components/GoogleSignInCard.astro'
-import Layout from '../layouts/Layout.astro'
+import GoogleSignInCard from "../components/GoogleSignInCard.astro";
+import Layout from "../layouts/Layout.astro";
 
-export const prerender = true
+export const prerender = true;
 ---
 
 <Layout
@@ -71,17 +71,17 @@ export const prerender = true
 </Layout>
 
 <script>
-  import { authClient } from '../lib/auth-client.ts'
+  import { authClient } from "../lib/auth-client.ts";
 
-  const session = await authClient.getSession()
+  const session = await authClient.getSession();
   if (session?.data) {
     const btnGoogleAuth = document.getElementById(
-      'btn-google-auth'
-    ) as HTMLButtonElement
+      "btn-google-auth",
+    ) as HTMLButtonElement;
     btnGoogleAuth.innerHTML = `
       <span class="loading loading-spinner loading-lg"></span>
       Signing in...
-    `
-    window.location.href = '/reminders'
+    `;
+    window.location.href = "/reminders";
   }
 </script>

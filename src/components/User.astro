@@ -1,13 +1,13 @@
 ---
-import DeleteIcon from '../assets/icons/delete.svg'
-import type { SelectUser } from '../db/schemas/auth.ts'
+import DeleteIcon from "../assets/icons/delete.svg";
+import type { SelectUser } from "../db/schemas/auth.ts";
 
 interface Props {
-  user: SelectUser
+  user: SelectUser;
 }
 
-const { user } = Astro.props
-const isAdmin = user.role === 'admin' || false
+const { user } = Astro.props;
+const isAdmin = user.role === "admin" || false;
 ---
 
 <li class="list-row user" data-id={user.id}>
@@ -44,34 +44,34 @@ const isAdmin = user.role === 'admin' || false
 </li>
 
 <script>
-  import { authClient } from '../lib/auth-client.ts'
+  import { authClient } from "../lib/auth-client.ts";
 
   const userListItems = document.querySelectorAll(
-    '.user'
-  ) as NodeListOf<HTMLElement>
+    ".user",
+  ) as NodeListOf<HTMLElement>;
   userListItems.forEach((user) => {
-    if (!user.dataset.id) return
+    if (!user.dataset.id) return;
 
-    const btnDelete = user.querySelector('.btn-delete') as HTMLButtonElement
+    const btnDelete = user.querySelector(".btn-delete") as HTMLButtonElement;
     if (btnDelete) {
-      btnDelete.addEventListener('click', async (e) => {
-        const confirmation = confirm('Delete this user?')
-        if (!confirmation) return
+      btnDelete.addEventListener("click", async (e) => {
+        const confirmation = confirm("Delete this user?");
+        if (!confirmation) return;
 
         try {
-          btnDelete.disabled = true
+          btnDelete.disabled = true;
           const { error } = await authClient.admin.removeUser({
-            userId: user.dataset.id
-          })
+            userId: user.dataset.id,
+          });
 
-          if (error) throw new Error('Failed to delete user')
+          if (error) throw new Error("Failed to delete user");
 
-          location.reload()
+          location.reload();
         } catch (err) {
-          console.error(err)
-          btnDelete.disabled = false
+          console.error(err);
+          btnDelete.disabled = false;
         }
-      })
+      });
     }
-  })
+  });
 </script>

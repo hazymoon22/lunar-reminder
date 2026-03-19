@@ -10,9 +10,7 @@ import {
 } from "../lib/lunar.ts";
 import { ZRepeatOption } from "../models/index.ts";
 
-export function getNextAlertDate(
-  reminder: InsertReminder | UpdateReminder,
-): Date | undefined {
+export function getNextAlertDate(reminder: InsertReminder | UpdateReminder): Date | undefined {
   const { repeat, reminderDate } = reminder;
   if (!reminderDate) return undefined;
 

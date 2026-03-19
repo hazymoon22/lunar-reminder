@@ -1,24 +1,24 @@
 ---
-import sanitizeHtml from 'sanitize-html'
-import CheckIcon from '../assets/icons/check.svg'
-import DeleteIcon from '../assets/icons/delete.svg'
-import EditIcon from '../assets/icons/edit.svg'
-import RepeatIcon from '../assets/icons/repeat.svg'
-import type { ReminderCard } from '../models'
-import { getLiveCollection } from 'astro:content'
-import { sanitizeMailBody } from '../lib/mail.ts'
+import sanitizeHtml from "sanitize-html";
+import CheckIcon from "../assets/icons/check.svg";
+import DeleteIcon from "../assets/icons/delete.svg";
+import EditIcon from "../assets/icons/edit.svg";
+import RepeatIcon from "../assets/icons/repeat.svg";
+import type { ReminderCard } from "../models/index.ts";
+import { getLiveCollection } from "astro:content";
+import { sanitizeMailBody } from "../lib/mail.ts";
 
 interface Props {
-  reminder: ReminderCard
+  reminder: ReminderCard;
 }
 
-const { reminder } = Astro.props
-const sanitizedMailBody = sanitizeMailBody(reminder.mailBody)
+const { reminder } = Astro.props;
+const sanitizedMailBody = sanitizeMailBody(reminder.mailBody);
 
-const { entries: alertEntries } = await getLiveCollection('alerts', {
-  reminderId: reminder.id
-})
-const alert = alertEntries?.[0]?.data
+const { entries: alertEntries } = await getLiveCollection("alerts", {
+  reminderId: reminder.id,
+});
+const alert = alertEntries?.[0]?.data;
 ---
 
 <details
@@ -33,13 +33,13 @@ const alert = alertEntries?.[0]?.data
           {reminder.title}
 
           {
-            reminder.dueIn === 'Expired' ? (
+            reminder.dueIn === "Expired" ? (
               <span class="badge badge-error badge-sm badge-soft ml-1">
                 {reminder.dueIn}
               </span>
             ) : (
               <span class="badge badge-info badge-sm ml-1">
-                Due {reminder.dueIn !== 'Today' && 'in'} {reminder.dueIn}
+                Due {reminder.dueIn !== "Today" && "in"} {reminder.dueIn}
               </span>
             )
           }
@@ -55,7 +55,7 @@ const alert = alertEntries?.[0]?.data
 
         <span
           >Reminder Date: Lunar {
-            reminder.reminderDate.toLocaleDateString('en-GB')
+            reminder.reminderDate.toLocaleDateString("en-GB")
           }</span
         >
 
@@ -63,8 +63,8 @@ const alert = alertEntries?.[0]?.data
           reminder.nextAlertDate && (
             <span>
               Next Alert Date: Lunar
-              {reminder.nextAlertDateLunar?.toLocaleDateString('en-GB')}
-              (Gregorian: {reminder.nextAlertDate?.toLocaleDateString('en-GB')})
+              {reminder.nextAlertDateLunar?.toLocaleDateString("en-GB")}
+              (Gregorian: {reminder.nextAlertDate?.toLocaleDateString("en-GB")})
             </span>
           )
         }
@@ -72,7 +72,7 @@ const alert = alertEntries?.[0]?.data
         <span class="flex align-middle gap-1 items-center relative top-0.5">
           <span class="flex items-center gap-1 text-secondary capitalize">
             <RepeatIcon width="20" height="20" class="inline" />
-            {reminder.repeat ? reminder.repeat : 'No repeat'}
+            {reminder.repeat ? reminder.repeat : "No repeat"}
           </span>
 
           <div
@@ -139,77 +139,77 @@ const alert = alertEntries?.[0]?.data
 </details>
 
 <script>
-  import { hc } from 'hono/client'
-  import type { AppType } from '../server/index.ts'
+  import { hc } from "hono/client";
+  import type { AppType } from "../server/index.ts";
 
-  const client = hc<AppType>('/')
+  const client = hc<AppType>("/");
 
   const reminderCards = document.querySelectorAll(
-    '.reminder-card'
-  ) as NodeListOf<HTMLElement>
+    ".reminder-card",
+  ) as NodeListOf<HTMLElement>;
   reminderCards.forEach((card) => {
-    if (!card.dataset.reminder) return
+    if (!card.dataset.reminder) return;
 
-    const reminder = JSON.parse(card.dataset.reminder)
+    const reminder = JSON.parse(card.dataset.reminder);
 
-    const btnEdit = card.querySelector('.btn-edit')
+    const btnEdit = card.querySelector(".btn-edit");
     if (btnEdit) {
-      btnEdit.addEventListener('click', (e) => {
+      btnEdit.addEventListener("click", (e) => {
         document.dispatchEvent(
-          new CustomEvent('modal-reminder-detail:open', {
-            detail: reminder
-          })
-        )
-      })
+          new CustomEvent("modal-reminder-detail:open", {
+            detail: reminder,
+          }),
+        );
+      });
     }
 
-    const btnDelete = card.querySelector('.btn-delete') as HTMLButtonElement
+    const btnDelete = card.querySelector(".btn-delete") as HTMLButtonElement;
     if (btnDelete) {
-      btnDelete.addEventListener('click', async (e) => {
-        const confirmation = confirm('Delete this reminder?')
-        if (!confirmation) return
+      btnDelete.addEventListener("click", async (e) => {
+        const confirmation = confirm("Delete this reminder?");
+        if (!confirmation) return;
 
         try {
-          btnDelete.disabled = true
-          const res = await client.api.reminders[':id'].$delete({
-            param: { id: reminder.id }
-          })
+          btnDelete.disabled = true;
+          const res = await client.api.reminders[":id"].$delete({
+            param: { id: reminder.id },
+          });
 
-          if (!res.ok) throw new Error('Failed to delete reminder')
+          if (!res.ok) throw new Error("Failed to delete reminder");
 
-          location.reload()
+          location.reload();
         } catch (err) {
-          console.error(err)
-          btnDelete.disabled = false
+          console.error(err);
+          btnDelete.disabled = false;
         }
-      })
+      });
     }
 
     const btnAcknowledge = card.querySelector(
-      '.btn-acknowledge'
-    ) as HTMLButtonElement
+      ".btn-acknowledge",
+    ) as HTMLButtonElement;
     if (btnAcknowledge) {
-      btnAcknowledge.addEventListener('click', async (e) => {
-        const confirmation = confirm('Acknowledge this alert?')
-        if (!confirmation || !card.dataset.alert) return
+      btnAcknowledge.addEventListener("click", async (e) => {
+        const confirmation = confirm("Acknowledge this alert?");
+        if (!confirmation || !card.dataset.alert) return;
 
-        const alert = JSON.parse(card.dataset.alert)
+        const alert = JSON.parse(card.dataset.alert);
 
         try {
-          btnAcknowledge.disabled = true
-          const res = await client.api.alerts[':id'].$patch({
+          btnAcknowledge.disabled = true;
+          const res = await client.api.alerts[":id"].$patch({
             param: { id: alert.id },
-            json: { acknowledged: true }
-          })
+            json: { acknowledged: true },
+          });
 
-          if (!res.ok) throw new Error('Failed to acknowledge alert')
+          if (!res.ok) throw new Error("Failed to acknowledge alert");
 
-          location.reload()
+          location.reload();
         } catch (err) {
-          console.error(err)
-          btnAcknowledge.disabled = false
+          console.error(err);
+          btnAcknowledge.disabled = false;
         }
-      })
+      });
     }
-  })
+  });
 </script>

@@ -1,5 +1,5 @@
 // @ts-check
-import deno from "@deno/astro-adapter";
+import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
 
@@ -8,7 +8,7 @@ import svelte from "@astrojs/svelte";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  adapter: deno(),
+  adapter: cloudflare(),
 
   vite: {
     plugins: [tailwindcss()],

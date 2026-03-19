@@ -36,7 +36,7 @@ export function getLunarCurrentYear(lunar: Lunar): Lunar | null {
   // then we decide there is no equivalent date in the next year.
   try {
     return Lunar.fromYmd(year, month, day);
-  } catch (_e) {
+  } catch {
     return null;
   }
 }
@@ -51,7 +51,7 @@ export function getLunarNextYear(lunar: Lunar): Lunar | null {
   // then we decide there is no equivalent date in the next year.
   try {
     return Lunar.fromYmd(targetYear, month, day);
-  } catch (_e) {
+  } catch {
     return null;
   }
 }
@@ -66,7 +66,7 @@ export function getLunarCurrentMonth(lunar: Lunar): Lunar | null {
   // then we decide there is no equivalent date in the next month.
   try {
     return Lunar.fromYmd(year, month, day);
-  } catch (_e) {
+  } catch {
     return null;
   }
 }
@@ -81,7 +81,7 @@ export function getLunarNextMonth(lunar: Lunar): Lunar | null {
   // then we decide there is no equivalent date in the next month.
   try {
     return Lunar.fromYmd(currentYear, targetMonth, day);
-  } catch (_e) {
+  } catch {
     return null;
   }
 }
