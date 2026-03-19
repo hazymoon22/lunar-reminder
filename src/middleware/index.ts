@@ -1,6 +1,5 @@
 import type { APIContext, MiddlewareNext } from "astro";
 import { defineMiddleware, sequence } from "astro:middleware";
-import { auth } from "../lib/auth.ts";
 
 const ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
 const INDEX_CACHE_CONTROL = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400";
@@ -46,12 +45,21 @@ const authenticate = defineMiddleware(async (context: APIContext, next: Middlewa
   const isApiPath = path.startsWith("/api"); // Better Auth API and Hono API routes
   const isAdminPath = path.startsWith("/admin");
 
+  // Skip auth checks during prerender/build
+  if (context.isPrerendered) {
+    const response = await next();
+    return withCacheHeaders(response, path);
+  }
+
   // Allow api paths
   // Hono API routes will be protected by Hono middleware.
   if (isHomepage || isApiPath) {
     const response = await next();
     return withCacheHeaders(response, path);
   }
+
+  // Lazy import auth only at runtime (not during prerender/build)
+  const { auth } = await import("../lib/auth.ts");
 
   // Fetch session for all requests (makes it available in pages)
   const session = await auth.api.getSession({
